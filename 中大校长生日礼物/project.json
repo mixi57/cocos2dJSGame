@@ -1,0 +1,30 @@
+{
+    "project_type": "javascript",
+
+    "debugMode" : 1,
+    "showFPS" : true,
+    "frameRate" : 60,
+    "id" : "gameCanvas",
+    "renderMode" : 0,
+    "engineDir":"frameworks/cocos2d-html5",
+
+    "modules" : ["cocos2d"],
+    "modules" : ["extensions"],
+
+    "jsList" : [
+        "src/resource.js",
+        "src/app.js",     
+        "src/dragIcon.js",
+        "src/scrollPainting.js",
+        "src/worldMap.js",
+        "src/routes.js",
+        "src/photoWall.js",
+        "src/books.js",
+        "src/birthday.js",
+        "src/publish.js",
+        "src/appendix.js",
+        "src/pages.js"
+         
+         
+    ]
+}
