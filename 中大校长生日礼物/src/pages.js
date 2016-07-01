@@ -9,7 +9,7 @@ var PageLayer = cc.Layer.extend({
 		this._super();
 		
 		// 添加背景音乐
-		//audioEngine.playMusic(MUSIC_FILE, true);
+		audioEngine.playMusic(MUSIC_FILE, true);
 	 	
 		var size = cc.winSize;
 
@@ -19,18 +19,23 @@ var PageLayer = cc.Layer.extend({
 		//pageView的锚点时0，0
 		this.pageView.x = 0;//size.width/2;
 		this.pageView.y = 0;//size.height/2;
-		
+		 
 		this.pageLayout = [];  
 		this.isDisplay = [];
-		for (var i = 0; i <= 10; ++i) {
+		var maxPage = 8; 
+		for (var i = 0; i < maxPage; ++i) {
 			this.pageLayout[i] = new ccui.Layout();
 			this.pageLayout[i].setContentSize(size);
 			var layoutRect = this.pageLayout[i].getContentSize(); 
 			
-			//白色背景
-			var imageView = new cc.LayerColor(cc.color("#ffffff"));
+			//背景
+			//var imageView = new cc.LayerColor(cc.color("#ffffff"));
+			var imageView = new ccui.ImageView();
+			imageView.loadTexture(res.Backgound_png);
+			imageView.x = layoutRect.width/2;
+			imageView.y = layoutRect.height/2;
 			this.pageLayout[i].addChild(imageView);
-		
+			
 			this.pageLayout[i].layer = null;
 			
 			this.isDisplay[i] = false; 
@@ -40,12 +45,29 @@ var PageLayer = cc.Layer.extend({
 		//this.pageLayout[0].layer = new RoutesLayer(res.Page2_png, res.Timeline1_png, 0, 10);
 		//this.pageLayout[0].addChild(this.pageLayout[0].layer);
 		
+		
+		
+		
 		this.pageLayout[0].layer = new ScrollPaintingLayer();
-		this.pageLayout[0].addChild(this.pageLayout[0].layer);
-		this.isDisplay[0] = true;
+		this.pageLayout[1].layer = new RoutesLayer(res.Page2_png, res.Timeline1_png, 0, 10, true);
+		this.pageLayout[2].layer = new WorldMapLayer();
+		this.pageLayout[3].layer = new PhotoWallLayer();
+		this.pageLayout[4].layer = new BooksLayer();
+		this.pageLayout[5].layer = new BirthdayLayer();
+		this.pageLayout[6].layer = new PublishLayer();
+		this.pageLayout[7].layer = new AppendixLayer();
+		
+		
+		for(var i = 0; i < maxPage; ++i){
+			this.pageLayout[i].addChild(this.pageLayout[i].layer);
+		}
+		
 		
 		this.pageView.addEventListener(this.pageViewEvent, this);
 		this.addChild(this.pageView,1000);  
+		
+		this.pageLayout[0].layer.doAnimation();
+		this.isDisplay[0] = true;
 
 		return true;
 	}, 
@@ -53,9 +75,12 @@ var PageLayer = cc.Layer.extend({
 	pageViewEvent:function(){
 		var i = this.pageView.getCurPageIndex();
 		//该页还没展示
-		if(!this.isDisplay[i]){
+		if(!this.isDisplay[i] && this.pageLayout[i].layer.doAnimation){
+			this.pageLayout[i].layer.doAnimation();
+			this.isDisplay[i] = true;
+			/*
 			switch(i){
-			//卷轴画
+			//卷轴画 
 			case 0:
 				this.pageLayout[i].layer = new ScrollPaintingLayer();
 				this.pageLayout[i].addChild(this.pageLayout[i].layer);
@@ -63,22 +88,22 @@ var PageLayer = cc.Layer.extend({
 				break;
 				//行程时间轴 
 			case 1:
-				this.pageLayout[i].layer = new RoutesLayer(res.Page2_png, res.Timeline1_png, 0, 10);
+				this.pageLayout[i].layer = new RoutesLayer(res.Page2_png, res.Timeline1_png, 0, 10, true);
 				this.pageLayout[i].addChild(this.pageLayout[i].layer);
 				this.isDisplay[i] = true;
 				break;
 			case 2:
-				this.pageLayout[i].layer = new RoutesLayer(res.Page3_png, res.Timeline2_png, 11, 22);
+				this.pageLayout[i].layer = new RoutesLayer(res.Page3_png, res.Timeline2_png, 11, 22, false);
 				this.pageLayout[i].addChild(this.pageLayout[i].layer);
 				this.isDisplay[i] = true;
 				break;
 			case 3:
-				this.pageLayout[i].layer = new RoutesLayer(res.Page3_png, res.Timeline2_png, 23, 34);
+				this.pageLayout[i].layer = new RoutesLayer(res.Page3_png, res.Timeline2_png, 23, 34, false);
 				this.pageLayout[i].addChild(this.pageLayout[i].layer);
 				this.isDisplay[i] = true;
 				break;
 			case 4:
-				this.pageLayout[i].layer = new RoutesLayer(res.Page5_png, res.Timeline3_png, 35, 43); 
+				this.pageLayout[i].layer = new RoutesLayer(res.Page5_png, res.Timeline3_png, 35, 43, false); 
 				this.pageLayout[i].addChild(this.pageLayout[i].layer);
 				this.isDisplay[i] = true;
 				break; 
@@ -120,86 +145,12 @@ var PageLayer = cc.Layer.extend({
 				break;
 			default:
 				break;
-			}
+			}*/
 		}
-		if(i == 10 && this.isDisplay[i]){
+		if(i == 7){
 			this.pageLayout[i].layer.setScrollTouch();
-		}
+		}	
 		
-		
-			/*
-		
-		//先移除上一屏的东西
-		if(i != this.lastIndex){
-			if(this.pageLayout[this.lastIndex].layer) {
-				this.pageLayout[this.lastIndex].removeChild(this.pageLayout[this.lastIndex].layer, true);
-				this.pageLayout[this.lastIndex].layer = null;
-			}
-			this.lastIndex = i;
-		}
-		//移除当前屏的东西，然后重新生成
-		if(this.pageLayout[i].layer) {
-			this.pageLayout[i].removeChild(this.pageLayout[i].layer, true);
-			this.pageLayout[i].layer = null;
-		}
-		switch(i){
-		//卷轴画
-		case 0:
-			this.pageLayout[i].layer = new ScrollPaintingLayer();
-			this.pageLayout[i].addChild(this.pageLayout[i].layer);
-			break;
-		//行程时间轴 
-		case 1:
-			this.pageLayout[i].layer = new RoutesLayer(res.Page2_png, res.Timeline1_png, 0, 10);
-			this.pageLayout[i].addChild(this.pageLayout[i].layer);
-			break;
-		case 2:
-			this.pageLayout[i].layer = new RoutesLayer(res.Page3_png, res.Timeline2_png, 11, 22);
-			this.pageLayout[i].addChild(this.pageLayout[i].layer);
-			break;
-		case 3:
-			this.pageLayout[i].layer = new RoutesLayer(res.Page3_png, res.Timeline2_png, 23, 34);
-			this.pageLayout[i].addChild(this.pageLayout[i].layer);
-			break;
-		case 4:
-			this.pageLayout[i].layer = new RoutesLayer(res.Page5_png, res.Timeline3_png, 35, 43); 
-			this.pageLayout[i].addChild(this.pageLayout[i].layer);
-			break; 
-		//世界地图
-		case 5:
-			this.pageLayout[i].layer = new WorldMapLayer();
-			this.pageLayout[i].addChild(this.pageLayout[i].layer);
-			break;
-		//照片墙
-		case 6:
-			this.pageLayout[i].layer = new PhotoWallLayer();
-			this.pageLayout[i].addChild(this.pageLayout[i].layer);
-			break;
-		//山水图和书影
-		case 7:		
-			this.pageLayout[i].layer = new BooksLayer();
-			this.pageLayout[i].addChild(this.pageLayout[i].layer);
-			break;
-		//祝校长生日快乐
-		case 8:		
-			this.pageLayout[i].layer = new BirthdayLayer();
-			this.pageLayout[i].addChild(this.pageLayout[i].layer);
-			break;
-		//火烈鸟出品logo
-		case 9:		
-			this.pageLayout[i].layer = new PublishLayer();
-			this.pageLayout[i].addChild(this.pageLayout[i].layer);
-			break;
-		//附录
-		case 10:		
-			this.pageLayout[i].layer = new AppendixLayer();
-			this.pageLayout[i].addChild(this.pageLayout[i].layer);
-			break;
-		default:
-			break;
-		}
-		*/
-		 
 	}
 });
 

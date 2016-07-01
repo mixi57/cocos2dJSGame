@@ -10,6 +10,11 @@ var description = "自2010年12月23日卸任中山大学校长起，截至2015�
 
 var PhotoWallLayer = cc.Layer.extend({
 	bg:null,
+	photo1:null,
+	photo2:null,
+	photo3:null,
+	photoWall:null,
+	photoDesc:null,
 	ctor:function(){
 		this._super();
 		
@@ -24,130 +29,109 @@ var PhotoWallLayer = cc.Layer.extend({
 		this.addChild(this.bg);
 		
 		//照片墙
-		var photoWall = new cc.Sprite(res.PhotoWall_png);
-		photoWall.attr({
+		this.photoWall = new cc.Sprite(res.PhotoWall_png);
+		this.photoWall.attr({
 			x: size.width /4*3,
 			y: size.height / 2,
 			scale : 0.5
 		});
-		this.addChild(photoWall);
+		this.addChild(this.photoWall);
 		
 		//3张大照片
-		var photo1 = new cc.Sprite(res.PresidentPhoto1_png);
-		var photo2 = new cc.Sprite(res.PresidentPhoto2_png);
-		var photo3 = new cc.Sprite(res.PresidentPhoto3_png);
+		this.photo1 = new cc.Sprite(res.PresidentPhoto1_png);
+		this.photo2 = new cc.Sprite(res.PresidentPhoto2_png);
+		this.photo3 = new cc.Sprite(res.PresidentPhoto3_png);
 		
-		photo1.attr({
+		this.photo1.attr({
 			x: 300,//size.width / 2,
 			y: 500,//size.height / 2,
 			//scale: 0.5,
 			rotation: -90
 		});
 		
-		photo2.attr({
+		this.photo2.attr({
 			x: 380, //size.width / 2,
 			y: 450, //size.height / 2,
 			//scale: 0.5,
 			rotation: 0
 		});
 		
-		photo3.attr({
+		this.photo3.attr({
 			x: 380, //size.width / 2,
 			y: 200, //size.height / 2,
 			//scale: 0.5,
 			rotation: -40
 		});
 		
-		this.addChild(photo1);
-		this.addChild(photo2);
-		this.addChild(photo3);
+		this.addChild(this.photo1);
+		this.addChild(this.photo2);
+		this.addChild(this.photo3);
 		
 		
-		
-		
-		/*
-		photo1.runAction(
-				cc.spawn(
-						cc.rotateTo(2, -135),
-						cc.moveTo(2, cc.p(100, 100))
-				)
-		);
-		
-		photo2.runAction(
-				cc.spawn(
-						cc.rotateTo(2, -45),
-						cc.moveTo(2, cc.p(100, 400))
-				)
-		);
-		
-		photo3.runAction(
-				cc.spawn(
-						cc.rotateTo(2, -90),
-						cc.moveTo(2, cc.p(400, 320))
-				)
-		);
-		*/
-		
+		return true;
+	},
+	doAnimation:function(){
+		var size = cc.winSize;
 		var onBackToWall = cc.CallFunc(this.backToWall, this);
-		
+
 		var onDesc = cc.CallFunc(this.setDesc, this);
+
+		var delay = cc.DelayTime(1);
+
 		
-		var delay = cc.DelayTime(2);
-		
-		//相片缩小回落到校长的图片墙上，图片墙放大充满整屏
-		var action = cc.Sequence(delay, onBackToWall, delay, cc.ScaleTo(2, 4, 4), delay, onDesc);
-		
+		var t1 = 2;
 		var action = cc.Sequence(
-				cc.DelayTime(5), 
+				cc.DelayTime(1), 
+				//相片缩小回落到校长的图片墙上
 				cc.CallFunc(function(){
-					photo1.runAction(
+					this.photo1.runAction(
 							cc.spawn(
-									cc.scaleTo(2, 0.5),
-									cc.rotateTo(2, -90),
-									cc.moveTo(2, cc.p(600, 200))
+									cc.scaleTo(t1, 0.5),
+									cc.rotateTo(t1, -90),
+									cc.moveTo(t1, cc.p(600, 200))
 							)	
 					);
 
-					photo2.runAction( 
+					this.photo2.runAction( 
 							cc.spawn(
-									cc.scaleTo(2, 0.5),
-									cc.rotateTo(2, -90),
-									cc.moveTo(2, cc.p(500, 400))
+									cc.scaleTo(t1, 0.5),
+									cc.rotateTo(t1, -450),
+									cc.moveTo(t1, cc.p(500, 400))
 							)	
 					);
-					photo3.runAction(
+					this.photo3.runAction(
 							cc.spawn(
-									cc.scaleTo(2, 0.5),
-									cc.rotateTo(2, -90),
-									cc.moveTo(2, cc.p(700, 100))
+									cc.scaleTo(t1, 0.5),
+									cc.rotateTo(t1, -90),
+									cc.moveTo(t1, cc.p(700, 100))
 							)	
 					); 
-			
+
 				}, this),
-				cc.DelayTime(2), 
+				cc.DelayTime(t1),
+				//图片墙放大充满整屏
 				cc.Spawn(cc.moveTo(2,cc.p(size.width/2, size.height/2)), cc.ScaleTo(2, 1, 1)),
+				cc.DelayTime(1), 
+				//图片墙中间板块呈现矩形蒙版
 				cc.CallFunc(function(){
-					var photoDesc = new cc.Sprite(res.PhotoDesc_png);
-					photoDesc.attr({
+					this.photoDesc = new cc.Sprite(res.PhotoDesc_png);
+					this.photoDesc.attr({
 						x : size.width/2,
 						y : size.height/2,
 						//scale : 0.5,
 						opacity : 0
 					});
-					this.addChild(photoDesc);
-					photoDesc.runAction(cc.FadeIn(2));
+					this.addChild(this.photoDesc);
+					this.photoDesc.runAction(cc.FadeIn(2));
 					//photoDesc.runAction(cc.Spawn(cc.FadeIn(2), cc.ScaleTo(2,1,1)));
+				}, this),
+				//添加拖动按钮
+				cc.CallFunc(function(){
+					this.addChild(new DragIcon());
 				}, this)
 		);
-		
-		
-		//var action = cc.Sequence(cc.ScaleTo(2, 4, 4), delay, onDesc);
-		
-		photoWall.runAction(action); 
-		
-		
-		
-		return true;
+		this.photoWall.runAction(action); 
+
 	},
 	
 	setDesc:function(){

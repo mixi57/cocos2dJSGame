@@ -14,8 +14,11 @@ var WorldMapLayer = cc.Layer.extend({
 			
 		});
 		this.addChild(this.sprite, 100);
-		
-		//cc.ScaleTo(duration, sx, sy)
+
+		return true;
+	},
+	doAnimation:function(){
+		var size = cc.winSize;
 		var delay = cc.delayTime(3);
 		var scaleAndMove = cc.spawn(
 				cc.scaleTo(2, 2, 2),
@@ -23,30 +26,14 @@ var WorldMapLayer = cc.Layer.extend({
 		);
 		var moveToLeft = cc.moveTo(2,cc.p(size.width/2, size.height));
 		//var setLogos = cc.callFunc(this.setLocation(), this);
-		
+
 		var backToCenter = cc.Spawn(
 				cc.scaleTo(2, 1, 1),
 				cc.moveTo(2,cc.p(size.width/2, size.height/2))
 		);
 		var action = cc.Sequence(delay, scaleAndMove, delay.clone(), moveToLeft, delay.clone(), backToCenter);
-		
+
 		this.sprite.runAction(action);  
-		//this.sprite.runAction(cc.fadeIn(4));  
- 
-		
-
-//		var onDesc = cc.callFunc(this.setDescription, this);
-//		var delay = cc.delayTime(0.5);  //卷轴完全打开后延迟0.5s，再显示字体
-//
-//		var action = cc.sequence(cc.progressTo(1, 100), delay, onDesc);
-//
-//
-//		this.sprite.runAction(action);
-
-		
-
-
-		return true;
 	},
 	
 	setLocation:function(){		

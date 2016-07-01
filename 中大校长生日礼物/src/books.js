@@ -21,44 +21,6 @@ var BooksLayer = cc.Layer.extend({
 		});
 		this.addChild(this.bg);
 		
-		//呈现“修五经授六艺有教无类诲人不倦；游列国说仁政疆无大小锲而不舍”
-		
-		var desc1 = new cc.LabelTTF("修五经授六艺有教无类诲人不倦\n游列国说仁政疆无大小锲而不舍", "Arvial", 28);
-		desc1.attr({
-			color:cc.color("##ff00ff"),
-			x : 485,
-			y : size.height/2,
-			opacity : 0,
-			rotation : -90
-		});
-		
-		this.addChild(desc1);
-		//desc1.runAction(cc.sequence(cc.FadeIn(1), cc.DelayTime(2), cc.fadeOut(2)));
-		
-		desc1.runAction(cc.sequence(
-				cc.Spawn(cc.FadeIn(2), cc.scaleTo(2,1.5,1.5)),
-				cc.DelayTime(2), 
-				cc.FadeOut(1)
-				));
-		var desc2 = new cc.LabelTTF("他是行走中的探索者，\n也让自己的思想‘行走’\n在世界各个角落", "Arvial", 30);
-		desc2.attr({
-			color:cc.color("##ff00ff"),
-			x : 535,
-			y : size.height/2,
-			opacity : 0,
-			rotation : -90
-		});
-
-		this.addChild(desc2);
-		desc2.runAction(cc.sequence(
-				cc.DelayTime(5), 
-				cc.Spawn(cc.FadeIn(2), cc.scaleTo(2,1.5,1.5)),
-				cc.DelayTime(2), 
-				cc.FadeOut(1),
-				cc.CallFunc(this.moveBooks,this)
-		)); 
-		
-		
 		
 		//this.runAction(cc.Sequence(cc.DelayTime(1), cc.CallFunc(this.moveBooks,this)));
 		
@@ -93,6 +55,7 @@ var BooksLayer = cc.Layer.extend({
 				x: startW,
 				y: startH,
 				opacity:0,
+				scale : 0.2,
 				rotation: -90
 			});
 			this.addChild(arrayOfBooks[i]);
@@ -106,7 +69,13 @@ var BooksLayer = cc.Layer.extend({
 			var delay = cc.delayTime(delaySecond);
 			var bezier = cc.bezierTo(5, controlPoints);
 			delaySecond += 0.7;
-			arrayOfBooks[i].runAction(cc.sequence(delay, cc.FadeIn(1), bezier, cc.FadeOut(1)));  
+			arrayOfBooks[i].runAction(cc.sequence(
+					delay, 
+					cc.FadeIn(1),
+					bezier, 
+					cc.FadeOut(1), 
+					cc.callFunc(this.removeFromParentAndCleanup, this, true)
+			));  
 		}
 		
 		var label = new cc.LabelTTF("然而这一切都只是他的兴趣", "Arvial", 30);
@@ -121,6 +90,50 @@ var BooksLayer = cc.Layer.extend({
 		this.addChild(label);
 		label.runAction(cc.Sequence(cc.DelayTime(delaySecond+2), cc.Spawn(cc.FadeIn(2), cc.scaleTo(2,1.5,1.5))));
 		
+	},
+	doAnimation:function(){
+		var size = cc.winSize;
+		//呈现“修五经授六艺有教无类诲人不倦；游列国说仁政疆无大小锲而不舍”
+		var desc1 = new cc.LabelTTF("修五经授六艺有教无类诲人不倦\n游列国说仁政疆无大小锲而不舍", "Arvial", 28);
+		desc1.attr({
+			color:cc.color("##ff00ff"),
+			x : 485,
+			y : size.height/2,
+			opacity : 0,
+			rotation : -90
+		});
+
+		this.addChild(desc1);
+		//desc1.runAction(cc.sequence(cc.FadeIn(1), cc.DelayTime(2), cc.fadeOut(2)));
+
+		desc1.runAction(cc.sequence(
+				cc.Spawn(cc.FadeIn(2), cc.scaleTo(2,1.5,1.5)),
+				cc.DelayTime(2), 
+				cc.FadeOut(1)
+		));
+		var desc2 = new cc.LabelTTF("他是行走中的探索者，\n也让自己的思想‘行走’\n在世界各个角落", "Arvial", 30);
+		desc2.attr({
+			color:cc.color("##ff00ff"),
+			x : 535,
+			y : size.height/2,
+			opacity : 0,
+			rotation : -90
+		});
+
+		this.addChild(desc2);
+		desc2.runAction(cc.sequence(
+				cc.DelayTime(5), 
+				cc.Spawn(cc.FadeIn(2), cc.scaleTo(2,1.5,1.5)),
+				cc.DelayTime(2), 
+				cc.FadeOut(1),
+				cc.CallFunc(this.moveBooks,this),
+				cc.CallFunc(function(){
+					this.addChild(new DragIcon());
+				}, this)
+		)); 
+	},
+	removeFromParentAndCleanup:function (nodeExecutingAction, data) {
+		nodeExecutingAction.removeFromParent(data);
 	}
 
 	

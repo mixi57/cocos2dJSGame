@@ -124,7 +124,7 @@ var RoutesLayer = cc.Layer.extend({
 //	arrayOfRoutes:[],
 //	arrayOfDates:[], 
 //	count:0,
-	ctor:function(background, sprite, start, end){
+	ctor:function(background, sprite, start, end, doScroll){
 		this._super();
 		
 		var size = cc.winSize;
@@ -136,148 +136,104 @@ var RoutesLayer = cc.Layer.extend({
 		});
 		this.addChild(bg);
 		
-		//时间轴
-		//this.timeline = new cc.Sprite(res.Branch_png); 
-		var timeline = new cc.ProgressTimer(new cc.Sprite(sprite));
-		timeline.type = cc.ProgressTimer.TYPE_BAR;
-		//timeline.midPoint = cc.p(0, 0);   //从左到右
-		timeline.midPoint = cc.p(0, 0);
-		timeline.barChangeRate = cc.p(1, 0); //y=0表示y不变
-		
-		timeline.x = size.width/2;
-		timeline.y = size.height/2;
-		 
-		this.addChild(timeline);
-		
-		
-		//var onSetRoute = cc.callFunc(this.setRoutes, this, {start:0, end:10});
-		//var delay = cc.delayTime(0.5);  
-
-		//var action = cc.sequence(cc.progressTo(1, 100), delay, onSetRoute);
-		
-		//时间轴的滚动动作
-		//var timelineAction = [];
-
-		var timelineAction = [];
 		var arrayOfRoutes = [];
 		var arrayOfDates = []; 
-		var arrayOfDates = [];
-		
-		var t = 0;
-		var count = 0;
-		for(var i = start; i <= end; ++i){
-			//timelineAction[4*i] = cc.DelayTime(2);
-			timelineAction[t++] = cc.progressTo(0.5, arrayOfTimelinePos[i]/1136*100);
-			//timelineAction[t++] = cc.DelayTime(0.5);
-			timelineAction[t++] = cc.callFunc(this.setRoutes, this, {dates:arrayOfDates, routes:arrayOfRoutes, i: i, t : count});
-			timelineAction[t++] = cc.DelayTime(1.5);
-			count++;
+		//时间轴出完再展现文字
+		if(doScroll){
+			var timeline = new cc.ProgressTimer(new cc.Sprite(sprite));
+			timeline.type = cc.ProgressTimer.TYPE_BAR;
+			timeline.midPoint = cc.p(0, 0);   //从左到右
+			timeline.barChangeRate = cc.p(1, 0); //y=0表示y不变
+			timeline.x = size.width/2;
+			timeline.y = size.height/2;
+			this.addChild(timeline);
+			
+			this.timeline = timeline;
+			
+			
 		}
-		if(timelineAction.length > 0) {
-			var action = cc.Sequence(timelineAction);
-			timeline.runAction(action);
-		}
+		//直接全部展现
+		else{
+			var timeline = new cc.Sprite(sprite);
+			timeline.attr({
+					x : size.width/2,
+					y : size.height/2
+			});
+			this.addChild(timeline);
+			var t = 0;
+			for(var i = start; i <= end; ++i){
+				//日期
+				arrayOfDates[t] = new cc.LabelTTF(arrayOfDateDesc[i], "Arial", 20);
+				arrayOfDates[t].attr({
+					x : arrayOfRoutePos[i],
+					y : middle-30-arrayOfDates[t].getContentSize().width/2, 
+					color : cc.color("#000000"),
+					rotation : -90,
+				});
+				this.addChild(arrayOfDates[t]);
+
+				//具体行程
+				arrayOfRoutes[t] = new cc.LabelTTF(arrayOfRouteDesc[i], "Arial", 20, cc.size(390, 24));	
+				arrayOfRoutes[t].attr({
+					x : arrayOfRoutePos[i],
+					y : middle+30+arrayOfRoutes[t].getContentSize().width/2,		
+					color : cc.color("#000000"),
+					rotation : -90,
+				});
+				this.addChild(arrayOfRoutes[t]);
+				++t;
+			}
+		}	
 		
 		return true;
 	},
 	
+	doAnimation:function(){
+//		this.timeline.runAction(cc.sequence(
+//				cc.progressTo(1, 100),
+//				cc.DelayTime(0.5),
+//				cc.CallFunc(this.setRoutes, this, {dates:arrayOfDates, routes:arrayOfRoutes, start:start, end:end})
+//		));
+	},
+	
 	setRoutes:function(nodeExecutingAction, data){
-		var i = data.i;
-		var arrayOfRoutes = data.routes;
+		
+		var dTime = 1;  //放大并淡出的时间
+		var t = 0;
 		var arrayOfDates = data.dates;
-		var t = data.t;
-		
-		var dTime = 0.5;
-		
-		//日期
-		arrayOfDates[t] = new cc.LabelTTF(arrayOfDateDesc[i], "Arial", 20);
-		arrayOfDates[t].attr({
-			x : arrayOfRoutePos[i],
-			y : middle-30-arrayOfDates[t].getContentSize().width/2,
-			opacity : 0,
-			color : cc.color("#000000"),
-			rotation : -90,
-			scale : 0.5
-		});
-		/*
-		arrayOfDates[i].x = arrayOfRoutePos[i];
-		arrayOfDates[i].y = middle-30-arrayOfDates[i].getContentSize().width/2;
-		arrayOfDates[i].opacity = 0;
-		arrayOfDates[i].color = cc.color("#000000");
-		arrayOfDates[i].rotation = -90;
-		 */
-		this.addChild(arrayOfDates[t]);
-		//arrayOfDates[i].runAction(cc.fadeIn(1));
-		arrayOfDates[t].runAction( cc.Sequence(cc.DelayTime(dTime), cc.Spawn(cc.scaleTo(dTime,1,1),cc.fadeIn(dTime))));
-
-		
-		
-		//具体行程
-		arrayOfRoutes[t] = new cc.LabelTTF(arrayOfRouteDesc[i], "Arial", 20, cc.size(390, 24));	
-		arrayOfRoutes[t].attr({
-			x : arrayOfRoutePos[i],
-			y : middle+30+arrayOfRoutes[t].getContentSize().width/2,
-			opacity : 0,			
-			color : cc.color("#000000"),
-			rotation : -90,
-			scale : 0.5
-		});
-
-		/*
-		arrayOfRoutes[i].x = arrayOfRoutePos[i];
-		arrayOfRoutes[i].y = middle+30+arrayOfRoutes[i].getContentSize().width/2;
-		arrayOfRoutes[i].opacity = 0;
-		arrayOfRoutes[i].color = cc.color("#000000");
-		arrayOfRoutes[i].vAlignment = cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM;
-		arrayOfRoutes[i].hAlignment = cc.TEXT_ALIGNMENT_RIGHT;
-		arrayOfRoutes[i].rotation = -90;
-		*/
-		this.addChild(arrayOfRoutes[t]);
-		//arrayOfRoutes[i].runAction(cc.fadeIn(1));
-		arrayOfRoutes[t].runAction( cc.Sequence(cc.DelayTime(dTime), cc.Spawn(cc.scaleTo(dTime,1,1), cc.fadeIn(dTime))));
-
-
-		
-		
-		/*
+		var arrayOfRoutes = data.routes;
 		var start = data.start;
 		var end = data.end;
-		var size = cc.winSize;
-		var delayInterval = 1;
-		var displayDelay = 0;
-		for(var i = start; i <= end; i++) {
-			//具体行程
-			displayDelay += delayInterval;
-			//var delay = cc.DelayTime(displayDelay);
-			arrayOfDelay[i] = cc.DelayTime(displayDelay);
-			
-			arrayOfRoutes[i] = new cc.LabelTTF(arrayOfRouteDesc[i], "Arial", 20, cc.size(300, 50));	
-			
-			arrayOfRoutes[i].x = arrayOfRoutePos[i];
-			arrayOfRoutes[i].y = middle+30+arrayOfRoutes[i].getContentSize().width/2;
-			arrayOfRoutes[i].opacity = 0;
-			arrayOfRoutes[i].color = cc.color("#000000");
-			arrayOfRoutes[i].vAlignment = cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM;
-			arrayOfRoutes[i].hAlignment = cc.TEXT_ALIGNMENT_RIGHT;
-			arrayOfRoutes[i].rotation = -90;
-			
-			
-			this.addChild(arrayOfRoutes[i]);
-						
-			arrayOfRoutes[i].runAction( cc.Sequence(arrayOfDelay[i], cc.fadeIn(1)));
-			
-			
+		for(var i = start; i <= end; ++i){
 			//日期
-			arrayOfDates[i] = new cc.LabelTTF(arrayOfDateDesc[i], "Arial", 20);
-			arrayOfDates[i].x = arrayOfRoutePos[i];
-			arrayOfDates[i].y = middle-30-arrayOfDates[i].getContentSize().width/2;
-			arrayOfDates[i].opacity = 0;
-			arrayOfDates[i].color = cc.color("#000000");
-			arrayOfDates[i].rotation = -90;
-			this.addChild(arrayOfDates[i]);
-			arrayOfDates[i].runAction( cc.Sequence(arrayOfDelay[i], cc.fadeIn(1)));
-			
-		}*/
+			arrayOfDates[t] = new cc.LabelTTF(arrayOfDateDesc[i], "Arial", 20);
+			arrayOfDates[t].attr({
+				x : arrayOfRoutePos[i],
+				y : middle-30-arrayOfDates[t].getContentSize().width/2,
+				opacity : 0,
+				color : cc.color("#000000"),
+				rotation : -90,
+				scale : 0.5
+			});
+			this.addChild(arrayOfDates[t]);
+
+			//具体行程
+			arrayOfRoutes[t] = new cc.LabelTTF(arrayOfRouteDesc[i], "Arial", 20, cc.size(390, 24));	
+			arrayOfRoutes[t].attr({
+				x : arrayOfRoutePos[i],
+				y : middle+30+arrayOfRoutes[t].getContentSize().width/2,
+				opacity : 0,			
+				color : cc.color("#000000"),
+				rotation : -90,
+				scale : 0.5
+			});
+			this.addChild(arrayOfRoutes[t]);
+			++t;
+		}
+		for (var i = 0; i < arrayOfDates.length; ++i) {
+			arrayOfDates[i].runAction(cc.Spawn(cc.scaleTo(dTime,1,1),cc.fadeIn(dTime)));
+			arrayOfRoutes[i].runAction(cc.Spawn(cc.scaleTo(dTime,1,1), cc.fadeIn(dTime)));
+		}
 	}
 	
 });
