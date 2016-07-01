@@ -1,5 +1,5 @@
 //var audioEngine = cc.audioEngine;
-//var MUSIC_FILE = cc.sys.os == cc.sys.OS_WP8 || cc.sys.os == cc.sys.OS_WINRT ? res.BgMusic :  res.BgMusic;
+//var MUSIC_FILE = cc.sys.os == cc.sys.OS_WP8 || cc.sys.os == cc.sys.OS_WINRT ? "res/Together Forever.mp3" : "res/Together Forever.mp3";
 
 var PageLayer = cc.Layer.extend({
 	pageView:null,
@@ -26,7 +26,30 @@ var PageLayer = cc.Layer.extend({
 		 
 		this.pageLayout = [];  
 		this.isDisplay = [];
-		var maxPage = 9; 		
+		var maxPage = 9; 
+		/*
+		for (var i = 0; i < maxPage; ++i) {
+			
+			this.pageLayout[i] = new ccui.Layout();
+			this.pageLayout[i].setContentSize(cc.size(1136, 640));
+			var layoutRect = this.pageLayout[i].getContentSize(); 
+			
+			//背景
+			var imageView;
+			if(i % 2 == 0)
+				imageView = new cc.Sprite("res/1.png");
+			else
+				imageView = new cc.Sprite("res/2.png");
+			imageView.x = layoutRect.width/2;
+			imageView.y = layoutRect.height/2;
+			this.pageLayout[i].addChild(imageView);
+			
+			this.pageLayout[i].layer = null;
+			
+			this.isDisplay[i] = false; 
+			
+			this.pageView.addPage(this.pageLayout[i]);		
+		}*/
 		
 		for (var i = 0; i < maxPage; ++i) {
 			this.pageLayout[i] = new ccui.Layout();
@@ -35,11 +58,11 @@ var PageLayer = cc.Layer.extend({
 
 			//背景
 			//var imageView = new cc.LayerColor(cc.color("#ffffff"));
-//			var imageView = new ccui.ImageView();
-//			imageView.loadTexture(res.Backgound_png);
-//			imageView.x = layoutRect.width/2;
-//			imageView.y = layoutRect.height/2;
-//			this.pageLayout[i].addChild(imageView);
+			var imageView = new ccui.ImageView();
+			imageView.loadTexture(res.Backgound_png);
+			imageView.x = layoutRect.width/2;
+			imageView.y = layoutRect.height/2;
+			this.pageLayout[i].addChild(imageView);
 
 			this.pageLayout[i].layer = null;
 
@@ -72,40 +95,6 @@ var PageLayer = cc.Layer.extend({
 		//this.pageView.setRotation(90);
 		this.setRotation(90);
 		var selfPointer = this;
-		var pageSizeWidth = size.width;//selfPointer.pageView.getPage(0).getContentSize().width;
-		var pageNum = maxPage;
-		
-		
-		var moveFunction = function(offsetX){
-			var page = null;
-			var nextPageX = 0;
-			var movePageNum = 0;
-			var index = pageNum - 1;
-			while ( movePageNum < pageNum ){
-				page = selfPointer.pageLayout[index];
-				if (page) {
-					nextPageX = page.x + offsetX;
-					//cc.log("page index ",index ,nextPageX,page.x);
-					if (index == 0 || index == pageNum-1 ){
-						if (index == 0 && nextPageX > 0) {
-							nextPageX = 0;
-							break;
-						}else if (index == pageNum-1 && nextPageX < 0) {
-							nextPageX = 0;
-							break;
-						}
-					}
-					page.x = nextPageX; 
-					// next
-					movePageNum ++;
-					index ++;
-					if (index == pageNum) {
-						index = 0;
-					}
-				}
-
-			}
-		}
 		
 		var listener = cc.eventManager.addListener({
 			event: cc.EventListener.TOUCH_ONE_BY_ONE,
@@ -116,34 +105,27 @@ var PageLayer = cc.Layer.extend({
 				cc.log("onTouchBegan at: " + pos.x + " " + pos.y + " Id:" + id );
 				cc.log(selfPointer.begin); 
 				selfPointer.begin = pos.y;
-				selfPointer.end = pos.y;
+				
 				return true;
 			},
 			onTouchMoved: function(touch, event) {
 				var pos = touch.getLocation();
 				var id = touch.getID();
 				cc.log("onTouchMoved at: " + pos.x + " " + pos.y + " Id:" + id );
-				//selfPointer.end = pos.y;
-				moveFunction(selfPointer.end - pos.y);
 				selfPointer.end = pos.y;
+
 			},
 			onTouchEnded: function(touch, event) {
 				var pos = touch.getLocation();
 				var id = touch.getID();
 				cc.log("onTouchEnded at: " + pos.x + " " + pos.y + " Id:" + id );
 				selfPointer.end = pos.y;
-				
-				var scrollTime = 0;
-				var needUpdatePos = true;
 				//向上拖动
 				if(selfPointer.end - selfPointer.begin > 50){
 					if(selfPointer.lastIndex < maxPage-1){
 						selfPointer.lastIndex++;
 						var i = selfPointer.lastIndex;
-						selfPointer.pageView.scrollToPage(i);   needUpdatePos =false;
-						if (i+1 < maxPage){
-							selfPointer.pageLayout[i+1].layer.updatePage(); 
-						}
+						selfPointer.pageView.scrollToPage(i);
 						selfPointer.begin = 0;
 						selfPointer.end = 0; 
 						if(!selfPointer.isDisplay[i] && selfPointer.pageLayout[i].layer.doAnimation){
@@ -153,24 +135,17 @@ var PageLayer = cc.Layer.extend({
 						if(i == maxPage-1){
 							selfPointer.pageLayout[i].layer.setScrollTouch();
 						}
-						selfPointer.display(i, maxPage);
 					}
-				}  
+				} 
 				//向下拖动				
 				else if(selfPointer.begin - selfPointer.end > 50){
 					if(selfPointer.lastIndex > 0){
 						selfPointer.lastIndex--;
 						var i = selfPointer.lastIndex;
-						selfPointer.pageView.scrollToPage(i);  needUpdatePos = false;
-						
+						selfPointer.pageView.scrollToPage(i);
 						selfPointer.begin = 0;
 						selfPointer.end = 0; 
-						selfPointer.display(i, maxPage);
 					}
-				}
-				if(needUpdatePos){
-					//updateAllPagesPosition();	
-					selfPointer.pageView.scrollToPage(selfPointer.pageView.getCurPageIndex());
 				}
 			},
 			onTouchCancelled:function(touch, event) {
@@ -183,36 +158,6 @@ var PageLayer = cc.Layer.extend({
 		this._listener = listener;
 		return true; 
 	}, 
-	//显示第i页时，将不相邻的setEnable(false)
-	display:function(i, maxPage){
-		var preFrom, preTo, postFrom, postTo;
-		if(i >= 2){
-			preFrom = 0; 
-			preTo = i-1;
-		}else {
-			preFrom = 0; 
-			preTo = -1;
-		}
-		if(i <= maxPage-3){
-			postFrom = i+1;
-			postTo = maxPage-1;
-		}
-		else{
-			postFrom = 0;
-			postTo = -1;
-		}
-		for(var j = preFrom; j <= preTo; ++j){
-			this.pageLayout[j].setEnabled(false);
-		}
-		for(var j = postFrom; j <= postTo; ++j){
-			this.pageLayout[j].setEnabled(false);
-		}
-		if (i > 0)
-			this.pageLayout[i-1].setEnabled(true);
-		if (i < maxPage-1)
-			this.pageLayout[i+1].setEnabled(true);
-		this.pageLayout[i].setEnabled(true);
-	},
 	
 	
 	pageViewEvent:function(){

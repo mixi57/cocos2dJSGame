@@ -17,13 +17,12 @@ var DragIcon = cc.Sprite.extend({
 		});   
 		this.addChild(arrow);
 
-		this.runAction(cc.FadeIn(0.5));
-		arrow.runAction(cc.FadeIn(0.5));
+		this.runAction(cc.fadeIn(0.5));
+		arrow.runAction(cc.fadeIn(0.5));
 		arrow.runAction(				
-				cc.RepeatForever(cc.Sequence(
-						cc.MoveTo(0.7, cc.p( s.width/2+8,s.height/2-3)), 
-						cc.MoveTo(0.7, cc.p( s.width/2-6,s.height/2-3))
-				) 
-				));
+				cc.repeatForever(cc.sequence(
+						cc.moveTo(0.7, cc.p( s.width/2+8,s.height/2-3)), 
+						cc.moveTo(0.7, cc.p( s.width/2-6,s.height/2-3))
+				)));
 	}
 });

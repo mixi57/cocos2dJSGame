@@ -17,7 +17,7 @@ var ScrollPaintingLayer = cc.Layer.extend({
 	ctor:function () {
 		this._super();
 
-		var size = cc.winSize;
+		var size = cc.size(1136, 640);//cc.winSize;
 
 		this.bg = new cc.Sprite(res.Page1_png);
 		this.bg.attr({
@@ -26,7 +26,7 @@ var ScrollPaintingLayer = cc.Layer.extend({
 		});
 		this.addChild(this.bg);
         //////////////////////////////////////////////////////////
-        // 卷轴画
+        // 卷轴画 
 
 		
         this.sprite = new cc.ProgressTimer(new cc.Sprite(res.ScrollPainting1_png));
@@ -34,15 +34,16 @@ var ScrollPaintingLayer = cc.Layer.extend({
         this.sprite.midPoint = cc.p(0, 0);
         this.sprite.barChangeRate = cc.p(1, 0); 
         this.addChild(this.sprite);
-        this.sprite.x = size.width/2;
+        this.sprite.x = 365;//size.width/2;
         this.sprite.y = size.height/2;
         //this.sprite.runAction(to1.repeatForever());
-       
+        this.sprite.percentage = 200/721*100;
+        //this.sprite.runAction(cc.progressTo(0.01, 200/721*100)); 
         this.scroll = new cc.Sprite(res.ScrollPainting2_png);
         this.scroll.x = 200;
-        this.scroll.y = 320;
+        this.scroll.y = 320; 
         this.addChild(this.scroll);
-        this.scroll.setVisible(false);
+        //this.scroll.setVisible(false); 
        
         //this.doAnimation();
 	
@@ -52,40 +53,15 @@ var ScrollPaintingLayer = cc.Layer.extend({
 	addIcon:function(){
 		cc.log("add icon");
 		this.addChild(new DragIcon());
-		/*
-		icon = new cc.Sprite(res.Icon_png);
-		icon.attr({
-			x : 1038,
-			y : 320,
-			opacity : 0,
-		});
-		var s = icon.getContentSize();
-		arrow = new cc.Sprite(res.Arrow_png);
-		arrow.attr({
-			x : s.width/2+10, 
-			y : s.height/2-3,
-			opacity : 0
-		});   
-		icon.addChild(arrow);
-		this.addChild(icon);
-		
-		icon.runAction(cc.FadeIn(0.5));
-		arrow.runAction(cc.FadeIn(0.5));
-		arrow.runAction(				
-				cc.RepeatForever(cc.Sequence(
-						cc.MoveTo(0.7, cc.p( s.width/2+6,s.height/2-3)), 
-						cc.MoveTo(0.7, cc.p( s.width/2-6,s.height/2-3))
-				)
-		));*/
 	},
-	doAnimation:function(){
+	doAnimation:function(){ 
 		
 		//var action = cc.progressTo(4, 100);
 		//this.sprite.runAction(action);
 		var pos = [
 		           {x : 422, y : 397 },
 		           {x : 416, y : 340 },
-		           {x : 410, y : 284 },
+		           {x : 418, y : 284 },
 		           {x : 411, y : 231 }	           
 		           ];
 		this.desc = [];
@@ -99,54 +75,51 @@ var ScrollPaintingLayer = cc.Layer.extend({
 			
 			this.addChild(this.desc[i]);
 			
-		}
+		} 
 		
-		var scrollTime = 0.2;
-		//卷轴动作
+		var scrollTime = 0.5;
 		//卷轴画动作
-		var path = [200, 300, 400, 500, 600, 745];
-		this.sprite.runAction(cc.sequence(
-				cc.progressTo(scrollTime, path[0]/1136*100),
-				cc.callFunc(function(){
-					this.scroll.setVisible(true);
-				}, this)
-		));   
-		var t = scrollTime;
+		var w = 741; 
+		var path = [200, 300, 400, 500, 600, w];
+		var t = scrollTime+0.5;
 		for(var i = 1; i < path.length; ++i){
 			this.sprite.runAction(cc.sequence(
 					cc.delayTime(t),
-					cc.progressTo(scrollTime, path[i]/1136*100)
+					cc.progressTo(scrollTime, path[i]/w*100)
 					
 			));
-			this.scroll.runAction(cc.sequence(
-					cc.DelayTime(t),
-					cc.MoveTo(scrollTime, cc.p(path[i], 320))
+			this.scroll.runAction(cc.sequence( 
+					cc.delayTime(t),
+					cc.moveTo(scrollTime, cc.p(path[i], 320))
 			));
 			t += scrollTime;
 		}
 		this.scroll.runAction(cc.sequence(
-				cc.DelayTime(t),
-				cc.rotateTo(0.1,2),
-				cc.rotateTo(0.1,-2),
-				cc.rotateTo(0.1, 0)
-				//cc.MoveTo(scrollTime, cc.p(path[i], 320))
+				cc.delayTime(t),
+				cc.rotateTo(0.05,2),
+				cc.rotateTo(0.05,-2),
+				cc.rotateTo(0.05, 0),
+				cc.rotateTo(0.05,1),
+				cc.rotateTo(0.05,-1),
+				cc.rotateTo(0.05, 0) 
+				//cc.moveTo(scrollTime, cc.p(path[i], 320))
 		));
-		t += scrollTime;
+		t += scrollTime;   
  
 		
 		
 		//this.sprite.runAction(cc.progressTo(scrollTime, 100));
 		//t += 0.5;
-		//文字展现 
+		//文字展现  
 		for(var i = 0; i < pos.length; ++i){
-			this.desc[i].runAction(cc.Sequence(cc.DelayTime(t),cc.progressTo(0.4, 100)));	
+			this.desc[i].runAction(cc.sequence(cc.delayTime(t),cc.progressTo(0.4, 100)));	
 			t += 0.4;
 		}
 		//按钮出现
-		this.runAction(cc.sequence(cc.DelayTime(t+1), cc.CallFunc(this.addIcon, this)));
+		this.runAction(cc.sequence(cc.delayTime(t+1), cc.callFunc(this.addIcon, this)));
 	
 	},
-	addScroll:function(){
+	updatePage:function(){
 		
 	}
 });
@@ -158,7 +131,7 @@ var DescriptionLayer = cc.Layer.extend({
 		var size = cc.size(640, 1136);
 		this.setContentSize(size);
 		this.setAnchorPoint(cc.p(0.5,0.5));
-		var winSize = cc.winSize;
+		var winSize = cc.size(1136, 640);//cc.winSize;
 		var richText = new ccui.RichText();
 		
         richText.ignoreContentAdaptWithSize(false);
@@ -193,6 +166,10 @@ var DescriptionLayer = cc.Layer.extend({
         this.rotation = 270;
         
         return true;
+	}
+	,
+	updatePage:function(){
+		
 	}
 });
 

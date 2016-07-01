@@ -11,7 +11,7 @@ var BooksLayer = cc.Layer.extend({
 	ctor:function(){
 		this._super();
 
-		var size = cc.winSize;
+		var size = cc.size(1136, 640);//cc.winSize;
 
 		//背景山水图
 		this.bg = new cc.Sprite(res.Page7_png);
@@ -22,14 +22,14 @@ var BooksLayer = cc.Layer.extend({
 		this.addChild(this.bg);
 		
 		
-		//this.runAction(cc.Sequence(cc.DelayTime(1), cc.CallFunc(this.moveBooks,this)));
+		//this.runAction(cc.sequence(cc.delayTime(1), cc.callFunc(this.moveBooks,this)));
 		
 		return true;
 		
-	},
-	
+	}, 
+	 
 	moveBooks:function(){
-		var size = cc.winSize;
+		var size = cc.size(1136, 640);//cc.winSize;
 		
 		// 6本书的书影
 		var arrayOfBookName = [
@@ -43,9 +43,9 @@ var BooksLayer = cc.Layer.extend({
 
 		var arrayOfBooks = [];
 		var startW = 702;
-		var startH = 700;//520;
+		var startH = 750;//520;
 		var endW = 702;
-		var endH = -60; //120;
+		var endH = -160; //120;
 		var midW = 900;
 		var midH = size.height/2;
 
@@ -54,8 +54,7 @@ var BooksLayer = cc.Layer.extend({
 			arrayOfBooks[i].attr({
 				x: startW,
 				y: startH,
-				opacity:0,
-				scale : 0.2,
+				opacity:0, 
 				rotation: -90
 			});
 			this.addChild(arrayOfBooks[i]);
@@ -71,32 +70,34 @@ var BooksLayer = cc.Layer.extend({
 			delaySecond += 0.7;
 			arrayOfBooks[i].runAction(cc.sequence(
 					delay, 
-					cc.FadeIn(1),
+					cc.fadeIn(1),
 					bezier, 
-					cc.FadeOut(1), 
+					cc.fadeOut(1), 
 					cc.callFunc(this.removeFromParentAndCleanup, this, true)
 			));  
 		}
 		
-		var label = new cc.LabelTTF("然而这一切都只是他的兴趣", "Arvial", 30);
+		//var label = new cc.LabelTTF("然而这一切都只是他的兴趣", "Arial", 30);
+		var label = new cc.LabelBMFont("然而这一切都只是他的兴趣", res.BM_font);
 		label.attr({
-			color:cc.color("##ff00ff"),
-			x: size.width/2,
+			//color:cc.color("##ff00ff"),
+			x: size.width/2-100,
 			y: size.height/2,
 			opacity:0,
 			rotation: -90
 		});
 
 		this.addChild(label);
-		label.runAction(cc.Sequence(cc.DelayTime(delaySecond+2), cc.Spawn(cc.FadeIn(2), cc.scaleTo(2,1.5,1.5))));
+		label.runAction(cc.sequence(cc.delayTime(delaySecond+2), cc.spawn(cc.fadeIn(2), cc.scaleTo(2,1.5,1.5))));
 		
 	},
 	doAnimation:function(){
-		var size = cc.winSize;
+		var size = cc.size(1136, 640);//cc.winSize;
 		//呈现“修五经授六艺有教无类诲人不倦；游列国说仁政疆无大小锲而不舍”
-		var desc1 = new cc.LabelTTF("修五经授六艺有教无类诲人不倦\n游列国说仁政疆无大小锲而不舍", "Arvial", 28);
+		//var desc1 = new cc.LabelTTF("修五经授六艺有教无类诲人不倦\n游列国说仁政疆无大小锲而不舍", "Arial", 28);
+		var desc1 = new cc.LabelBMFont("修五经授六艺有教无类诲人不倦\n游列国说仁政疆无大小锲而不舍", res.BM_font);
 		desc1.attr({
-			color:cc.color("##ff00ff"),
+			//color:cc.color("##ff00ff"),
 			x : 485,
 			y : size.height/2,
 			opacity : 0,
@@ -104,36 +105,42 @@ var BooksLayer = cc.Layer.extend({
 		});
 
 		this.addChild(desc1);
-		//desc1.runAction(cc.sequence(cc.FadeIn(1), cc.DelayTime(2), cc.fadeOut(2)));
+		//desc1.runAction(cc.sequence(cc.fadeIn(1), cc.delayTime(2), cc.fadeOut(2)));
 
 		desc1.runAction(cc.sequence(
-				cc.Spawn(cc.FadeIn(2), cc.scaleTo(2,1.5,1.5)),
-				cc.DelayTime(2), 
-				cc.FadeOut(1)
+				cc.spawn(cc.fadeIn(2), cc.scaleTo(2,1.5,1.5)),
+				cc.delayTime(2), 
+				cc.fadeOut(1)
 		));
-		var desc2 = new cc.LabelTTF("他是行走中的探索者，\n也让自己的思想‘行走’\n在世界各个角落", "Arvial", 30);
+		//var desc2 = new cc.LabelTTF("他是行走中的探索者，\n也让自己的思想‘行走’\n在世界各个角落", "Arial", 30);
+		var desc2 = new cc.LabelBMFont("他是行走中的探索者，\n也让自己的思想‘行走’\n在世界各个角落", res.BM_font);
 		desc2.attr({
-			color:cc.color("##ff00ff"),
+			//color:cc.color("##ff00ff"),
 			x : 535,
 			y : size.height/2,
+			textAlign : cc.TEXT_ALIGNMENT_CENTER,
 			opacity : 0,
 			rotation : -90
 		});
 
 		this.addChild(desc2);
 		desc2.runAction(cc.sequence(
-				cc.DelayTime(5), 
-				cc.Spawn(cc.FadeIn(2), cc.scaleTo(2,1.5,1.5)),
-				cc.DelayTime(2), 
-				cc.FadeOut(1),
-				cc.CallFunc(this.moveBooks,this),
-				cc.CallFunc(function(){
+				cc.delayTime(5), 
+				cc.spawn(cc.fadeIn(2), cc.scaleTo(2,1.5,1.5)),
+				cc.delayTime(2), 
+				cc.fadeOut(1),
+				cc.callFunc(this.moveBooks,this),
+				cc.delayTime(4),
+				cc.callFunc(function(){
 					this.addChild(new DragIcon());
 				}, this)
 		)); 
 	},
 	removeFromParentAndCleanup:function (nodeExecutingAction, data) {
 		nodeExecutingAction.removeFromParent(data);
+	},
+	updatePage:function(){
+		
 	}
 
 	

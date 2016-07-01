@@ -18,13 +18,14 @@ var PhotoWallLayer = cc.Layer.extend({
 	ctor:function(){
 		this._super();
 		
-		var size = cc.winSize;
+		var size = cc.size(1136, 640);//cc.winSize;
 		
 		//背景
-		this.bg = new cc.Sprite(res.Page8_png);
+		this.bg = new cc.Sprite(res.PhotoWallBg_png);
 		this.bg.attr({
 			x: size.width /  2,
 			y: size.height / 2,
+			scale : 4, 
 		});
 		this.addChild(this.bg);
 		
@@ -33,7 +34,8 @@ var PhotoWallLayer = cc.Layer.extend({
 		this.photoWall.attr({
 			x: size.width /4*3,
 			y: size.height / 2,
-			scale : 0.5
+			scale : 0.5,
+			opacity : 0
 		});
 		this.addChild(this.photoWall);
 		
@@ -43,24 +45,24 @@ var PhotoWallLayer = cc.Layer.extend({
 		this.photo3 = new cc.Sprite(res.PresidentPhoto3_png);
 		
 		this.photo1.attr({
-			x: 300,//size.width / 2,
-			y: 500,//size.height / 2,
-			//scale: 0.5,
-			rotation: -90
+			x: 236,//size.width / 2,
+			y: 318,//size.height / 2
+			scale: 1.4,
+			//rotation: -90
 		});
 		
 		this.photo2.attr({
-			x: 380, //size.width / 2,
-			y: 450, //size.height / 2,
-			//scale: 0.5,
+			x: 664, //size.width / 2,
+			y: 156, //size.height / 2
+			scale: 1.1,
 			rotation: 0
 		});
-		
+		 
 		this.photo3.attr({
-			x: 380, //size.width / 2,
-			y: 200, //size.height / 2,
-			//scale: 0.5,
-			rotation: -40
+			x: 857, //size.width / 2,
+			y: 467, //size.height / 2
+			scale: 1.0,
+			//rotation: -40
 		});
 		
 		this.addChild(this.photo1);
@@ -71,49 +73,58 @@ var PhotoWallLayer = cc.Layer.extend({
 		return true;
 	},
 	doAnimation:function(){
-		var size = cc.winSize;
-		var onBackToWall = cc.CallFunc(this.backToWall, this);
+		var size = cc.size(1136, 640);//cc.winSize;
+		var onBackToWall = cc.callFunc(this.backToWall, this);
 
-		var onDesc = cc.CallFunc(this.setDesc, this);
+		var onDesc = cc.callFunc(this.setDesc, this);
 
-		var delay = cc.DelayTime(1);
+		var delay = cc.delayTime(1.5);
 
 		
 		var t1 = 2;
-		var action = cc.Sequence(
-				cc.DelayTime(1), 
+		var pos = [
+		           {x : 1027, y: 201},
+		           {x : 689, y: 476},
+		           {x : 226, y: 162 },		           
+		           ];
+		var action = cc.sequence(
+				delay, 
 				//相片缩小回落到校长的图片墙上
-				cc.CallFunc(function(){
+				cc.callFunc(function(){
 					this.photo1.runAction(
 							cc.spawn(
-									cc.scaleTo(t1, 0.5),
-									cc.rotateTo(t1, -90),
-									cc.moveTo(t1, cc.p(600, 200))
-							)	
-					);
+									cc.scaleTo(t1, 1, 1),
+									//cc.rotateTo(t1, 360),
+									cc.moveTo(t1, cc.p(pos[0].x, pos[0].y))							
+							));
 
-					this.photo2.runAction( 
+					this.photo2.runAction(							
 							cc.spawn(
-									cc.scaleTo(t1, 0.5),
-									cc.rotateTo(t1, -450),
-									cc.moveTo(t1, cc.p(500, 400))
-							)	
-					);
+									cc.scaleTo(t1, 1, 1),
+									//cc.rotateTo(t1, 360),
+									cc.moveTo(t1, cc.p(pos[1].x, pos[1].y))
+							));
 					this.photo3.runAction(
 							cc.spawn(
-									cc.scaleTo(t1, 0.5),
-									cc.rotateTo(t1, -90),
-									cc.moveTo(t1, cc.p(700, 100))
-							)	
-					); 
+									cc.scaleTo(t1, 1, 1),
+									//cc.rotateTo(t1, 360),
+									cc.moveTo(t1, cc.p(pos[2].x, pos[2].y))
+							));
 
 				}, this),
-				cc.DelayTime(t1),
 				//图片墙放大充满整屏
-				cc.Spawn(cc.moveTo(2,cc.p(size.width/2, size.height/2)), cc.ScaleTo(2, 1, 1)),
-				cc.DelayTime(1), 
+				//cc.delayTime(t1/2),
+				cc.fadeIn(t1/2),
+				cc.spawn(cc.moveTo(t1/2,cc.p(size.width/2, size.height/2)), cc.scaleTo(t1/2, 1, 1)),
+//				cc.callFunc(function(){
+//					this.photo1.setVisible(false);
+//					this.photo2.setVisible(false);
+//					this.photo3.setVisible(false);
+//
+//				}, this),
+				delay.clone(),  
 				//图片墙中间板块呈现矩形蒙版
-				cc.CallFunc(function(){
+				cc.callFunc(function(){
 					this.photoDesc = new cc.Sprite(res.PhotoDesc_png);
 					this.photoDesc.attr({
 						x : size.width/2,
@@ -122,11 +133,11 @@ var PhotoWallLayer = cc.Layer.extend({
 						opacity : 0
 					});
 					this.addChild(this.photoDesc);
-					this.photoDesc.runAction(cc.FadeIn(2));
-					//photoDesc.runAction(cc.Spawn(cc.FadeIn(2), cc.ScaleTo(2,1,1)));
+					this.photoDesc.runAction(cc.fadeIn(2)); 
+					//photoDesc.runAction(cc.Spawn(cc.fadeIn(2), cc.scaleTo(2,1,1)));
 				}, this),
 				//添加拖动按钮
-				cc.CallFunc(function(){
+				cc.callFunc(function(){
 					this.addChild(new DragIcon());
 				}, this)
 		);
@@ -135,7 +146,7 @@ var PhotoWallLayer = cc.Layer.extend({
 	},
 	
 	setDesc:function(){
-		var winSize = cc.winSize;
+		var winSize = cc.size(1136, 640);//cc.winSize;
 		
 		//文字背景色
 		var descBackground = new cc.LayerColor(cc.color("#EEEEE0"), 640, 200);
@@ -155,7 +166,10 @@ var PhotoWallLayer = cc.Layer.extend({
 		this.addChild(descBackground);
 		
 		//this.desc.setOpacity(0);
-		descBackground.runAction(cc.FadeIn(2));
-		//this.desc.runAction(cc.FadeIn(2));
+		descBackground.runAction(cc.fadeIn(2));
+		//this.desc.runAction(cc.fadeIn(2));
+	},
+	updatePage:function(){
+		
 	}
 });
