@@ -2,7 +2,7 @@
   "init_cfg": {
     "isLandscape": false,
     "isWindowTop": false,
-    "name": "catchcup",
+    "name": "catchcup_new",
     "width": 960,
     "height": 640,
     "entry": "main.js",

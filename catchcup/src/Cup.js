@@ -1,16 +1,16 @@
 var Cup = cc.Sprite.extend({
 	_type : 0,
-	_show : false,
-
+	_show : true,
+	
 	ctor : function(type){
 		this._super();
 		this._type = type;
 		cupRes = null;
-		cupName = "";
+        cupName = "";
 		switch (this._type) {
 		case GameConfig.goldCup.type:
 			cupRes = resource.goldRes;
-			cupName = "奖 杯";
+			cupName = "奖杯";
 			break;
 		case GameConfig.silverCup.type:
 			cupRes = resource.silverRes;
@@ -18,7 +18,7 @@ var Cup = cc.Sprite.extend({
 			break;
 		case GameConfig.copperCup.type: 
 			cupRes = resource.copperRes;
-			cupName = "铜币";
+            cupName = "铜币";
 			break;
 		case GameConfig.flower.type:
 			cupRes = resource.flowerRes;
@@ -34,17 +34,17 @@ var Cup = cc.Sprite.extend({
 			break;
 		default:
 			cc.log("---------warn not match cupRes");
-		break;
+			break;
 		}
 		this.initWithFile(cupRes);
-		var label = new cc.LabelTTF(cupName ,"Arial",20)
+		var label = cc.LabelTTF(cupName ,"Marker Felt",20)
 		this.addChild(label);
-
+		
 	},
 
 	resetCup : function() {
 		this._type = 0;
-
+		
 	},
 	getCupType :function(){
 		return this._type;

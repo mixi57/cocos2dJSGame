@@ -2,12 +2,12 @@ var GameConfig = {
 
 		goldCup :{
 			type : 0,
-			speed : 130,
-			dropInterval : 3
+			speed : 300,
+			dropInterval : 2
 		},
 		silverCup :{
 			type : 1,
-			speed : 140,
+			speed : 140, 
 			dropInterval : 3
 		},
 		copperCup :{
@@ -41,5 +41,13 @@ var GameConfig = {
 	        woodSpeed:[],
 	        clockSpeed:[],
 			targetPoint:[]
-		}
+		},
+		buttonType :{
+			kPauseGame : 0,
+			kStartGame : 1,
+			kRestartGame : 2,
+			kShare : 3,
+			kShareTip : 4,
+			kContinue : 5
+		} 
 }

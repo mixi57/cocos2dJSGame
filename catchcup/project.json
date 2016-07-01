@@ -13,6 +13,9 @@
         "src/Resource.js",
         "src/GameConfig.js",
         "src/Cup.js",
-        "src/MainScene.js"
+        "src/MyButton.js",
+        "src/PauseLayer.js",
+        "src/MainScene.js",
+        "src/testLayer.js"
     ]
 }
