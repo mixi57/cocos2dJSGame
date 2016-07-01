@@ -1,0 +1,25 @@
+{
+    "project_type": "javascript",
+
+    "debugMode" : 1,
+    "showFPS" : false,
+    "frameRate" : 60,
+    "id" : "gameCanvas",
+    "renderMode" : 0,
+    "engineDir":"frameworks/cocos2d-html5",
+
+    "modules" : ["cocos2d", "extensions"],
+
+    "jsList" : [
+        "src/resource.js",
+        "src/GameEndScene.js",
+        "src/GameScene.js",
+        "src/GameStartScene.js",
+        "src/PlayerModel.js",
+        "src/mapLayer.js",
+        "src/NewButton.js",
+        "src/GameInfoLayer.js",
+        "src/RegisterShare.js",
+        "src/GameRankInfoLayer.js"
+    ]
+}
