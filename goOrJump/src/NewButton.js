@@ -37,7 +37,6 @@ var NewButton = ccui.Button.extend({
                 labelSize = 28
             this.setTitleFontSize(labelSize)
             this.setTitleText(text)
-            this.setTitleFontName(res.Font_MSYH.name)
             if(labelColor){
                 // label.setColor(labelColor)
                 this.setTitleColor(labelColor)

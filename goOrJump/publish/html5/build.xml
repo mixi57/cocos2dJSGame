@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<project name="Javascript compress project" basedir="/Users/mixi/Documents/cocos/goOrJumpDemo" default="compile">
+<project name="Javascript compress project" basedir="/Users/mixi/Documents/cocos/goOrJumpDemo3" default="compile">
 
     <taskdef name="jscomp" classname="com.google.javascript.jscomp.ant.CompileTask"
              classpath="/Users/mixi/Documents/cocos_gather/cocos2d-js-v3.6-beta/tools/cocos2d-console/plugins/project_compile/build_web/bin/compiler-1.7.jar"/>
@@ -8,11 +8,11 @@
         <jscomp compilationLevel="simple" 
                 warning="quiet"
                 debug="false" 
-                output="/Users/mixi/Documents/cocos/goOrJumpDemo/publish/html5/game.min.js"
+                output="/Users/mixi/Documents/cocos/goOrJumpDemo3/publish/html5/game.min.js"
                 languagein="ECMASCRIPT5"
                 
                 >
-            <sources dir="/Users/mixi/Documents/cocos/goOrJumpDemo/frameworks/cocos2d-html5">
+            <sources dir="/Users/mixi/Documents/cocos/goOrJumpDemo3/frameworks/cocos2d-html5">
                 <file name="CCBoot.js"/>
                 <file name="CCDebugger.js"/>
                 <file name="cocos2d/core/utils/BinaryLoader.js"/>
@@ -297,8 +297,6 @@
                 <file name="src/mapLayer.js"/>
                 <file name="src/NewButton.js"/>
                 <file name="src/GameInfoLayer.js"/>
-                <file name="src/RegisterShare.js"/>
-                <file name="src/GameRankInfoLayer.js"/>
                 <file name="main.js"/>
 
             </sources>

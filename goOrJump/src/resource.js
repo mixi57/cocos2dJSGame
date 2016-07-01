@@ -18,14 +18,13 @@ var res = {
 
     img_gameInfoBtn : "res/gameInfo.png",
     img_rankInfoBtn : "res/rankInfo.png",
-    img_rankInfoBg : "res/rankInfoBg.png",
 
     playerList : "res/boywalkxiao.plist",
     playerPng : "res/boywalkxiao.png",
 
     img_startBg : "res/startBg.png",
 
-    playerJumpList : "res/boyjumpjian.plist",
+    playerJumpList : "res/boyjumpjianxiao.plist",
     playerJumpPng : "res/boyjumpjian.png",
 
     img_schoolIcon0 : "res/school/school_01.png",
@@ -74,18 +73,13 @@ var res = {
     img_sponsorInfo : "res/sponsorInfo.png",
 
     img_arrowSign : "res/arrow.png",
+    img_shareLabel : "res/shareLabel.png",
     img_shareBg : "res/shareBg.png",
 
-    img_linkIcon : "res/linkLogo.jpg",
-    img_badge : "res/badge.png",
-
-    img_ruleInfoBtn : "res/ruleInfo.png",
-    img_workInfoBtn : "res/workInfoBtn.png",
-
-    Font_MSYH : {
+    Font_Xingkai : {
             type:"font",
-            name:"MSYH",
-            srcs:["res/font/MSYH.TTF"]
+            name:"private_bold",
+            srcs:["res/font/private_bold.TTF"]
     }
     
 };

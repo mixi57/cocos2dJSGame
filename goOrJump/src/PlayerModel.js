@@ -54,8 +54,6 @@ var playerModel = cc.Node.extend({
         if (_nowStep == 0){
             cc.log("死定了")
             _isDie = true
-
-            cc.director.getRunningScene()._gameLayer.removeActionCache()
         }
 
         _oldPos = this.getPosition()
@@ -165,51 +163,57 @@ var spriteFrameCache = cc.spriteFrameCache;
         var jumpAnimFrames = []
         for (var i = 1; i <= 4; i++) {
             str = "boyjumpjian" + (i < 10 ? ("0" + i) : i) + ".png";
+
+            // cc.log("jump ooo ",str)
             frame = spriteFrameCache.getSpriteFrame(str);
             jumpAnimFrames.push(frame);
         }
-        str = "boyjumpjian01.png"
-        frame = spriteFrameCache.getSpriteFrame(str);
-        jumpAnimFrames.push(frame);
+        // cc.log("jump ",jumpAnimFrames.length)
 
-        _jumpActionAnimation = new cc.Animation(jumpAnimFrames, MOVE_TIME/jumpAnimFrames.length);
+        _jumpActionAnimation = new cc.Animation(jumpAnimFrames, 1)//MOVE_TIME/jumpAnimFrames.length);
         _jumpActionAnimation.retain()
 
-        _jumpPlayer = new cc.Sprite("#boyjumpjian01.png")//(res.playerJumpPng)//("#boyjumpjian01.png")//("#grossini_dance_01.png");
-        _jumpPlayer.x = 38//100//_jumpPlayer.width/6 // 70//winSize.width / 2 - 80;
-        _jumpPlayer.y = -2//-16//70;
-        _jumpPlayer.setAnchorPoint(cc.p(0.5,0))
-        // _jumpPlayer.setColor(cc.color(255,0,0))
-        _jumpPlayer.setVisible(false) //setOpacity(0)
+        _jumpPlayer = new cc.Sprite("#boyjumpjian04.png")//(res.playerJumpPng)//("#boyjumpjian01.png")//("#grossini_dance_01.png");
+        _jumpPlayer.x = 100//_jumpPlayer.width/6 // 70//winSize.width / 2 - 80;
+        _jumpPlayer.y = 70;
+
+        this.addChild(_jumpPlayer)
+        // _jumpPlayer.setOpacity(0)
 
 
-        var jumpSpritebatch = new cc.SpriteBatchNode(res.playerJumpPng)//s_grossini);
-        jumpSpritebatch.addChild(_jumpPlayer);
-        this.addChild(jumpSpritebatch);
-        // _jumpPlayer.runAction(cc.animate(_jumpActionAnimation
-        //     ))
-*/
+        // var jumpSpritebatch = new cc.SpriteBatchNode(res.playerJumpPng)//s_grossini);
+        // jumpSpritebatch.addChild(_jumpPlayer);
+        // this.addChild(jumpSpritebatch);
+        */
+
+        // var img = cc.Sprite(res.playerPng)
+        // this.addChild(img)
+
     },
     goAction : function(type){
         cc.log("goAction",type)
-        _actionPlayer.runAction(cc.animate(_actionAnimation));
+
+        _actionPlayer.setOpacity(255)
+            // _jumpPlayer.setOpacity(0)
+            _actionPlayer.runAction(cc.animate(_actionAnimation));
+
         /*
         switch(type){
             case 0:
-            _actionPlayer.setVisible(true)//setOpacity(255)
-            _jumpPlayer.setVisible(false)//setOpacity(0)
+            _actionPlayer.setOpacity(255)
+            // _jumpPlayer.setOpacity(0)
             _actionPlayer.runAction(cc.animate(_actionAnimation));
 
             break;
             case 1:
-            _actionPlayer.setVisible(false) //setOpacity(0)
-            _jumpPlayer.setVisible(true) //setOpacity(255)
+            // _actionPlayer.setOpacity(0)
+            _jumpPlayer.setOpacity(255)
             _jumpPlayer.runAction(
                 cc.sequence(
                 cc.animate(_jumpActionAnimation),
                 cc.callFunc(function(){
-                    _actionPlayer.setVisible(true)//setOpacity(255)
-                    _jumpPlayer.setVisible(false)//setOpacity(0)
+                    _actionPlayer.setOpacity(255)
+                    _jumpPlayer.setOpacity(0)
                 })
                 )
             );

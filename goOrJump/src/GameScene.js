@@ -1,7 +1,6 @@
 // GameScene 
 var MOVE_TIME = 0.25
 var WIN_SIZE
-var BEST_SCORE 
 var gameLayer = cc.Layer.extend({
     sprite:null,
     _playerModel : null,
@@ -19,14 +18,10 @@ var gameLayer = cc.Layer.extend({
     _stopGame : null,
 
     _allTime : null,
-    _startGame : null,
 
-    _leftBtn : null,
-    _rightBtn : null,
     ctor:function () {
 
         this._super();
-        RegisterShare()
         var size = cc.winSize;
         if(!ADD_HEIGHT){
             ADD_HEIGHT = size.height - 960
@@ -37,38 +32,12 @@ var gameLayer = cc.Layer.extend({
         if(!BUTTON_EVENT){
             BUTTON_EVENT = true
         }
-        if(!BEST_SCORE){
-            // BEST_SCORE = MOVE_TIME * (mapInfoTable.length -1)
-            //搜索最短路径
-            // var shorterLine = ""
-            var btnTimes = 0
-            for(var i = 0; i < mapInfoTable.length-1 ;i++){
-                if( mapInfoTable[i+1] > 0 ){
-                    if(mapInfoTable[i+2] > 0){      
-                        cc.log(i+" jump")
-                        i++
-                        btnTimes++
-                    } else{
-                        cc.log(i+" go")
-                        btnTimes++
-                    } 
-                } else {
-                    
-                    cc.log(i+"jump")
-                    i++
-                    btnTimes++
-                }
-            }
-            BEST_SCORE = MOVE_TIME * btnTimes
-            cc.log("best score "+BEST_SCORE+" ",btnTimes,mapInfoTable.length -1)
-        }
        
         _time = 30.0
         _grade = 0
         _moveDisGather = 0
         _stopGame = false
         _allTime = 0
-        _startGame = false
 
         _touchActionCache = new Array()
 
@@ -85,23 +54,18 @@ var gameLayer = cc.Layer.extend({
         // _playerModel.setAnchorPoint(cc.p(0.5,0))
         this.addChild(_playerModel)
 
-        _leftBtn = new NewButton(
+        var leftBtn = new NewButton(
             res.img_goBtn,
-            (73 + 0.5*MAPLAYER_LINE_DISTANCE)* (WIN_SIZE.width/DefultSize.width) ,
-            120,
+            73,120,
             this.goEvent,
             this
         )
-        _leftBtn.rotation = 90 
-        // _leftBtn.setScale(1.5)
-        _rightBtn = new NewButton(
+        var rightBtn = new NewButton(
             res.img_jumpBtn,
-            (571 - 0.5*MAPLAYER_LINE_DISTANCE)* (WIN_SIZE.width/DefultSize.width),
-            120,
+            571,120,
             this.jumpEvent,
             this
         )
-        // _rightBtn.setScale(1.5)
 
         // var leftBtn = new ccui.Button()
         // leftBtn.setTouchEnabled(true)
@@ -122,19 +86,17 @@ var gameLayer = cc.Layer.extend({
 
         _gradeLabel = new NewButton(
             res.img_orangeBtn,
-            107 * (WIN_SIZE.width/DefultSize.width),
-            908,
+            107,908,
             null,
             this,
-            "0km",
+            "00km",
             cc.color(255,77,0),
             30            
         )
 
         _timeLabel = new NewButton(
             res.img_orangeBtn,
-            350 * (WIN_SIZE.width/DefultSize.width),
-            908,
+            350,908,
             null,
             this,
             "30.0s",
@@ -144,21 +106,17 @@ var gameLayer = cc.Layer.extend({
 
         _stopBtn = new NewButton(
             res.img_stopBtn,
-            602 * (WIN_SIZE.width/DefultSize.width),
-            908,
+            602,900,
             this.stopEvent,
             this
         )
 
         this.schedule(this.updateTimeLabel,0.1)
-        // this.schedule(this.updateGradeLabel,MOVE_TIME)
+        this.schedule(this.updateGradeLabel,MOVE_TIME)
 
         return true;
     },
     goEvent:function(self){
-        if(!_startGame){
-            _startGame = true
-        }
         if(_playerModel.getLifeInfo()){
             self.judgeState(0)                    
         } else{
@@ -168,9 +126,6 @@ var gameLayer = cc.Layer.extend({
         // sender.setContentSize(200,100);
     }, 
     jumpEvent:function(self){
-        if(!_startGame){
-            _startGame = true
-        }
         if(_playerModel.getLifeInfo()){
             self.judgeState(1)                  
         }else{
@@ -198,7 +153,7 @@ var gameLayer = cc.Layer.extend({
         }
     },
     updateTimeLabel : function(){ 
-        if(!_stopGame && _startGame){
+        if(!_stopGame){
             _time = _time - 0.1
             _time = Math.round(_time*10)/10.0 
             // cc.log("time2",_time,_allTime)
@@ -210,11 +165,7 @@ var gameLayer = cc.Layer.extend({
                 this.gameOver(false)
             }
             if(_timeLabel){
-                var zero = ""
-                if (_time*10%10==0) {
-                    zero = ".0"
-                };
-                _timeLabel.setTitleText(String(_time)+zero+"s")
+                _timeLabel.setTitleText(String(_time)+"s")
             }
         }
     }, 
@@ -223,7 +174,7 @@ var gameLayer = cc.Layer.extend({
     },
     addGrade : function(grade){
         _grade += grade
-        cc.director.getRunningScene()._gameLayer.updateGradeLabel()
+        // this.updateGradeLabel()
     },
 
     judgeState : function(btnType){
@@ -282,38 +233,23 @@ var gameLayer = cc.Layer.extend({
         }
     },
     removeActionCache : function(){
-        cc.log("removeActionCacheremoveActionCache")
         _touchActionCache.splice(0,_touchActionCache.length)
     },
     gameOver : function(gameResult){
         BUTTON_EVENT = false
-        // 移除动作的缓存
-        this.removeActionCache()
-        _leftBtn.setTouchEnabled(false)
-        _rightBtn.setTouchEnabled(false)
         this.unschedule(this.updateTimeLabel)
-        // this.unschedule(this.updateGradeLabel)
+        this.unschedule(this.updateGradeLabel)
     // cc.log("_allTime_allTime_allTime",_allTime,gameResult)
     // var gatherTime = _allTime
-    
-        var deleyTime = gameResult ? 3 : MOVE_TIME
+        var deleyTime = gameResult ? 2 : MOVE_TIME
         this.runAction(cc.sequence(
             cc.delayTime(deleyTime),
             cc.callFunc(function(){
-                GameOverSave(_allTime,gameResult,function(json){
-                    var data = json.data
-                    if(data){
-                        PLAYER_RATIO = json.data.ratio
-                    }else{
-                        PLAYER_RATIO = "0%"
-                    }
-                    // cc.log("PLAYER_RANK",PLAYER_RANK,json.data.rank)
                 var scene = new GameEndScene(gameResult,_allTime)
             // scene.initInfo(gameResult,this._allTime)
                 var transitions = new cc.TransitionFade(1, scene);
                 cc.director.runScene(transitions);
             // cc.director.getRunningScene().initInfo(gameResult,this._allTime)
-                })
             })
 
         ))
@@ -330,11 +266,11 @@ var gameLayer = cc.Layer.extend({
         stopWinBg.y = WIN_SIZE.height/2
         this._colorWin.addChild(stopWinBg)
 
-        /*var label = new cc.LabelTTF("不要丢下我哦！",res.Font_MSYH.name,30,cc.size(0, 0),cc.TEXT_ALIGNMENT_CENTER,cc.VERTICAL_TEXT_ALIGNMENT_TOP)
+        var label = new cc.LabelTTF("不要丢下我哦！","",30,cc.size(0, 0),cc.TEXT_ALIGNMENT_CENTER,cc.VERTICAL_TEXT_ALIGNMENT_TOP)
         //)//("后面还有更精彩的关等您挑战呢，\n\n不要走开哦"
         label.x = stopWinBg.width / 2
         label.y = stopWinBg.height / 2 + 30 
-        stopWinBg.addChild(label)*/
+        stopWinBg.addChild(label)
 
         stopWinBg.getLayer = this
 

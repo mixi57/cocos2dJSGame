@@ -5,10 +5,9 @@ var MAPLAYER_STEP_HEIGHT = 71
 
 var __DEBUG__ = false
 
+// var MOVE_TIME = 1
+
 var mapInfoTable = [
-// 1,1,1,1,1,1,1,1,1,1,
-// 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-// 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
 1,1,1,0,1,1,1,0,2,2,2,2,0,3,
 3,0,3,3,0,4,4,0,3,3,0,4,4,0,
 4,4,4,4,0,3,3,0,2,2,0,1,1,0,
@@ -29,20 +28,17 @@ var mapInfoTable = [
 0,3,3,0,4,0,3,3,0,2,2,0,1,1,
 0,1,1,1,0,2,2,2,0,2,2,0,3,3,
 0,3,0,2,0,3,3,0,2,0,3,3,0,4]
-
 var SchoolPos = [
-// 1,2,4,5,6,8,9,10,11,13,14,16,17,
 19,39,59,79,99,119,139,159,179,199,219,239,259,279
 ]
-var BookPos = [
-10,26,47,62,69,82,84,112,135,136,154,167,178,192,193,213,222,254,267,274
-]
+var BookPos = [10,26,47,62,69,82,84,112,135,136,154,167,178,192,193,213,222,254,267,274]
 // [11,27,48,63,70,83,85,113,136,137,155,168,179,193,194,214,223,255,268,275]
 //[13,27,41,55,69,83,97,111,125,139,153,167,181,195,209,223,237,251,265,279]
 var mapLayer = cc.Layer.extend({
     _mapLinesTable : null,
     _batchNode : null,
     _isMapMove : false,
+    _addCallFunc : null,
     _actionCache : null,
     _showStartPos : null,
     _showEndPos : null,
@@ -68,15 +64,11 @@ var mapLayer = cc.Layer.extend({
     _addTimeFunc : null,
 
     _lastBookIndex : null,
-    _lastSchoolIndex : null,
-
-    _moveNode : null,
+    _laseSchoolIndex : null,
 
     ctor:function(){
-        this._super() 
+    	this._super() 
 
-        _moveNode = new cc.Node()
-        this.addChild(_moveNode,10)
         //batchnode
         _mapBgBatchNode = new cc.SpriteBatchNode(res.img_gameBg)
         _mapSize = _mapBgBatchNode.texture.getContentSize()
@@ -85,30 +77,24 @@ var mapLayer = cc.Layer.extend({
         _mapBgTable  = new Array()
         this.updateMapBg()
 
+
         if (__DEBUG__){
             _labelParent = null
             _labelTable = new Array()
         }
 
-        //batchnode
-        var batchNodeRes = res.img_stonePng
-        _batchNode = new cc.SpriteBatchNode(batchNodeRes)
-        _moveNode.addChild(_batchNode,5)
+    	//batchnode
+    	var batchNodeRes = res.img_stonePng
+    	_batchNode = new cc.SpriteBatchNode(batchNodeRes)
+    	this.addChild(_batchNode,5)
 
         _schoolIndex = 0
         _schoolParent = new cc.Node()
-        _lastSchoolIndex = 0
+        _laseSchoolIndex = 0
         _showSchoolIconTable = new Array()
-        _moveNode.addChild(_schoolParent,6)
+        this.addChild(_schoolParent,6)
 
-        _bookIndex = 0
-        _lastBookIndex = 0
-        _bookIndexTable = new Array()
-        _bookParent = new cc.Node()
-        _moveNode.addChild(_bookParent,6)
-
-
-        var mapShowNum = 640 / MAPLAYER_LINE_DISTANCE
+    	var mapShowNum = 640 / MAPLAYER_LINE_DISTANCE
 
         _showStartPos = 0 
         _showEndPos = 0 //_showStartPos + mapShowNum
@@ -118,7 +104,12 @@ var mapLayer = cc.Layer.extend({
         _addTimeFunc = null
 
 
-        
+        _bookIndex = 0
+        _lastBookIndex = 0
+        _bookIndexTable = new Array()
+        _bookParent = new cc.Node()
+        this.addChild(_bookParent,6)
+
         _mapLinesTable = new Array()
         _actionCache = new Array()
         _schoolIndexTable = new Array()
@@ -128,8 +119,11 @@ var mapLayer = cc.Layer.extend({
 
         this.addMapLine(mapShowNum)
         _isMapMove = false
+        _addCallFunc = null
 
-        return true
+
+
+    	return true
     },
     scrollLineNum : function( lineNum,isActionCache ){
         if(lineNum <= 0){
@@ -142,50 +136,20 @@ var mapLayer = cc.Layer.extend({
             _actionCache.push(lineNum)
             return 
         }}
-        
+        // cc.log("scrollLineNum",callTimes,_isMapMove,isActionCache)
+
+        // var time = 1
         _moveNums = lineNum
-        
+        // cc.log("scrollLineNum",lineNum,_showStartPos)
         this.addMapLine(_moveNums)
         _isMapMove = true
-        
-        var moveChildOffset = function(parent,moveOffset){
-            // for (var child in parent.getChildren()){
-            var children = parent.getChildren()
-            for (var i = 0;i < children.length;i++){
-                child = children[i]
-                if (child) {
-                    // cc.log("what happen",moveOffset)
-                    child.x += moveOffset
-                };
+        for (var i = 0; i < _mapLinesTable.length ; i++) {
+            var sprite = _mapLinesTable[i]
+            if (sprite){
+                var spritePos = [sprite.x - _moveNums * MAPLAYER_LINE_DISTANCE,sprite.y]//this.getLinePosByIndex(i-lineNum)
+                sprite.runAction(cc.moveTo(MOVE_TIME,spritePos[0],spritePos[1]))
             }
-            // if (parent) {
-            //     parent.x += moveOffset
-            // };
-        }
-
-        var removeUnusedChild = function(parent,childTable){
-            // for (var child in parent.getChildren()){
-            //     if (child) {
-            //         if (child.x + child.width * (1 - child.getAnchorPoint().x) < 0) {
-            //             child.rem
-            //         };
-            //     };
-            // }
-            for (var i = 0; i < childTable.length ;){
-                var sprite = childTable[i]
-                if (sprite) {
-                    if (sprite.x + sprite.width * (1 - sprite.getAnchorPoint().x) < 0){
-                        sprite.removeFromParent()
-                        childTable.shift()
-                    } else {
-                        sprite.stopAllActions()
-                        i++
-                    }
-                };
-            }
-
-        }
-
+        };
 
         for (var i = _mapBgTable.length - 1; i >= 0; i--) {
             var moveMap = _mapBgTable[i]
@@ -197,72 +161,63 @@ var mapLayer = cc.Layer.extend({
             }
         };
 
-         var newPos =_moveNums * MAPLAYER_LINE_DISTANCE
-        
-        _moveNode.runAction(cc.sequence(
-            cc.moveTo(MOVE_TIME,-newPos,0),
-            cc.callFunc(function(){
-                var newOffset = _moveNode.x
-                
-                moveChildOffset(_batchNode,newOffset)
-                // _batchNode.x = 0
+        if(__DEBUG__){
+            _labelParent.runAction(cc.moveBy(MOVE_TIME,-_moveNums * MAPLAYER_LINE_DISTANCE,0))
+        }
+        _bookParent.runAction(cc.moveBy(MOVE_TIME,-_moveNums * MAPLAYER_LINE_DISTANCE,0))
+        _schoolParent.runAction(cc.moveBy(MOVE_TIME,-_moveNums * MAPLAYER_LINE_DISTANCE,0))
 
-                if(__DEBUG__){
-                    cc.log("label num ",_labelParent.getChildren().length)
-                    moveChildOffset(_labelParent,newOffset)
-                    // var labelChild = _labelParent.getChildren()
-                    // for(var i=0;i<labelChild.length;i++){
-                    //     var c = labelChild[i]
-                    //     c.x += newOffset
-                    // }
-                    // _labelParent .x = 0
-                }
-                moveChildOffset(_bookParent,newOffset)
-                moveChildOffset(_schoolParent,newOffset)
-                
-                _bookParent .x =0
-                _schoolParent .x =0
-
-                // _batchNode.x = 0
-_moveNode.x = 0 
-                //check
-                 
-                for (var i = 0; i < _mapLinesTable.length ;) {
+        var callbackFun = function(){
+            
+            // var removeNum = 0
+            for (var i = 0; i < _mapLinesTable.length ;) {
                 var sprite = _mapLinesTable[i]
                 if(sprite){
+
                     if (sprite.x + sprite.width * (1 - sprite.getAnchorPoint().x) < 0){
                         sprite.removeFromParent()
                         _mapLinesTable.shift()
 
                     } else {
                         sprite.stopAllActions()
-                        i++
+                        i = i + 1    
+                        // sprite.x = this.getLinePosByIndex(i)[0]//.x
+                         if (i==1){
+                         cc.log("最左边的位置 ",sprite.x)
+//                         sprite.x = this.getLinePosByIndex(i-1,true)[0]
+                         }
+                         else {
+//                        	 cc.log("iiii ",i,_mapLinesTable.length)
+//                        	 sprite.x = this.getLinePosByIndex(i-1,true)[0]
+//                        	 sprite.x = this.getLinePosByIndex(i-1,true)[0]
+                        }
+                         
+                        // break
                     }
-                }}
+                }
+            };
 
-                this.updateMapBg()
-                this.addGradeFromMap(_moveNums)
-            _showStartPos = _showStartPos + _moveNums
+            this.updateMapBg()
+  
+            this.addGradeFromMap(_moveNums)
+            _showStartPos = _showStartPos + _moveNums 
 
-            
-                if (_schoolIndex > 0){
+            if (_schoolIndex > 0){
                 var schoolTimes = 1
-                var schoolIconPos = SchoolPos[_schoolIndex - schoolTimes]
-
-                
-
-                while (schoolIconPos >= _showStartPos && _schoolIndex > _lastSchoolIndex){
-                    if(schoolIconPos == _showStartPos){
-                        
-                        _lastSchoolIndex = _schoolIndex - schoolTimes
+                var schoolIndex = SchoolPos[_schoolIndex - schoolTimes]
+                while (schoolIndex >= _showStartPos && _schoolIndex > _laseSchoolIndex){
+                    if(schoolIndex == _showStartPos){
+                        _laseSchoolIndex = _schoolIndex - schoolTimes
                        this.removeSchoolIcon(_showStartPos)
                        break 
                     } else {
                         schoolTimes++
-                        schoolIconPos = SchoolPos[_schoolIndex - schoolTimes] 
+                        schoolIndex = SchoolPos[_schoolIndex - schoolTimes] 
                     }
                 }
+
             }
+
             if (_bookIndex > 0){
                 var bookTimes = 1
                 var bookIndex = BookPos[_bookIndex - bookTimes]
@@ -277,21 +232,34 @@ _moveNode.x = 0
                     }
                 }
             }
+if(__DEBUG__){
+            for (var i = 0; i < _labelTable.length ;){
+                var label = _labelTable[i]
+                if(label.x + 30 < 0){
+                    label.removeFromParent()
+                    _labelTable.splice(i,1)
+                }else{
+                    break
+                }
+            }
+        }
+cc.log("_schoolIndexTable.length",_schoolIndexTable.length)
             for (var i = 0; i < _schoolIndexTable.length; ) {
-                
+                cc.log("i",i)
             var arrayTable = _schoolIndexTable[i]
             var icon = arrayTable[1]
             if(icon && icon.x + 30 < 0){
                 icon.removeFromParent()
                 _schoolIndexTable.splice(i,1)
-                // cc.log("_schoolIndexTable  sss ",_schoolIndexTable.length)
+                cc.log("_schoolIndexTable  sss ",_schoolIndexTable.length)
 
             }else{
                 break
             }
             }
+
             for (var i = 0; i < _bookIndexTable.length; ) {
-            
+            cc.log("iii book",i,_bookIndexTable.length)
             var arrayTable = _bookIndexTable[i]
             var icon = arrayTable[1]
             if(icon.x + 30 < 0){
@@ -299,7 +267,8 @@ _moveNode.x = 0
                 _bookIndexTable.splice(i,1)
             }else{
                 break
-            }}
+            }
+        }
 
             if( _actionCache.length > 0 ){
                 var newLineNum = _actionCache[0]
@@ -311,19 +280,11 @@ _moveNode.x = 0
             }
 
             this.getParent().actionCallFunc()
+        }
 
-
-
-                // callbackFun()
-                // cc.callFunc(callbackFun,this)
-            }//,
-            // cc.callFunc(callbackFun,this))
-        ,this)
-))
-
-        // this.runAction(cc.sequence(
-        //     cc.delayTime(MOVE_TIME+0.02),
-        //     cc.callFunc(callbackFun,this)))
+        this.runAction(cc.sequence(
+            cc.delayTime(MOVE_TIME+0.02),
+            cc.callFunc(callbackFun,this)))
        
     },
     addMapLine : function( lineNum ){
@@ -349,14 +310,13 @@ _moveNode.x = 0
 
                 _mapLinesTable.push(mapLine)
 
-// cc.log("_bookIndex < BookPos.length",_bookIndex , BookPos.length,index)
                 // book 
                 if (_bookIndex < BookPos.length && BookPos[_bookIndex] == index)
                 {
                     var bookIcon = new cc.Sprite(res.img_bookIcon)
                     bookIcon.setScale(0.5)
                     bookIcon.setAnchorPoint(cc.p(0.5,0))
-                    bookIcon.x = pos[0]//(index+0.5) * MAPLAYER_LINE_DISTANCE//pos[0]//(index+0.5) * MAPLAYER_LINE_DISTANCE//pos[0]
+                    bookIcon.x = (index+0.5) * MAPLAYER_LINE_DISTANCE//pos[0]//(index+0.5) * MAPLAYER_LINE_DISTANCE//pos[0]
                     bookIcon.y = pos[1] + mapLine.height * 0.5
                     _bookParent.addChild(bookIcon,100)
                     _bookIndex ++
@@ -370,7 +330,7 @@ _moveNode.x = 0
                     var schoolIcon = new cc.Sprite(res.img_schoolSign)//(res["img_schoolIcon"+String(_schoolIndex)])
                     // schoolIcon.setScale(0.2)
                     schoolIcon.setAnchorPoint(cc.p(0.5,0))
-                    schoolIcon.x = pos[0]//(index+0.5) * MAPLAYER_LINE_DISTANCE//pos[0]//(index+0.5) * MAPLAYER_LINE_DISTANCE//pos[0]
+                    schoolIcon.x = (index+0.5) * MAPLAYER_LINE_DISTANCE//pos[0]//(index+0.5) * MAPLAYER_LINE_DISTANCE//pos[0]
                     schoolIcon.y = pos[1] + mapLine.height * 0.5
                     _schoolParent.addChild(schoolIcon,100)
                     _schoolIndex ++
@@ -382,16 +342,17 @@ _moveNode.x = 0
                 if (__DEBUG__){
                     if(!_labelParent){
                         _labelParent = new cc.Node()
-                        _moveNode.addChild(_labelParent,10)
+                        this.addChild(_labelParent,10)
                     }
                 // cc.log("indexindex",index)
-                    var label = new cc.LabelTTF(String(index),res.Font_MSYH.name,50)
+                    var label = new cc.LabelTTF(String(index),"黑体",50)
 
-                    label.x = pos[0]//(index+0.5) * MAPLAYER_LINE_DISTANCE
+                    label.x = (index+0.5) * MAPLAYER_LINE_DISTANCE
                     label.y = pos[1]
                     label.setColor(cc.color(255,0,0,255))
                     _labelParent.addChild(label,10)
                     _labelTable.push(label)
+
                 }
 
             }   
@@ -421,12 +382,12 @@ _moveNode.x = 0
         
         // cc.log("update map bg ",_mapBgTable.length)
         for (var i = 0; i < _mapBgTable.length; ) {
-//          cc.log("index",i)
+//        	cc.log("index",i)
             var moveMapBg = _mapBgTable[i]
             // cc.log("iiii",i,_mapBgTable.length)
             if (moveMapBg){
                 // moveMap.release()
-            // cc.log("moveMap.x + _mapSize.width",i,moveMapBg.x , _mapSize.width)
+           	// cc.log("moveMap.x + _mapSize.width",i,moveMapBg.x , _mapSize.width)
                 if (moveMapBg.x + _mapSize.width < 0){
                     moveMapBg.removeFromParent()
                     _mapBgTable.shift()
@@ -456,12 +417,12 @@ _moveNode.x = 0
     },
 
     getPlayerStepNumsByNextPos : function(posNum){
-        // var index = _showStartPos + posNum + _actionCache.length
+    	// var index = _showStartPos + posNum + _actionCache.length
         // if (_isMapMove){
         //     index++
         // }
-        // cc.log("iiiiiiiii",index,mapInfoTable[index],_showStartPos)
-        // cc.log("123",_showStartPos,_showEndPos)
+    	// cc.log("iiiiiiiii",index,mapInfoTable[index],_showStartPos)
+    	// cc.log("123",_showStartPos,_showEndPos)
         var value = 0
         if (posNum < mapInfoTable.length )
         {
@@ -503,7 +464,7 @@ _moveNode.x = 0
                     // _showSchoolIcon.y = oldSchoolIcon.y + _schoolParent.y
                     
                     var pos = cc.p(oldSchoolIcon.x + _schoolParent.x,oldSchoolIcon.y+100)
-                    this.addTipLabel(3,pos)
+                    this.addTipLabel(5,pos)
 
                     oldSchoolIcon.removeFromParent(true)
 
@@ -536,7 +497,7 @@ _moveNode.x = 0
             if (arrayIndex >= index){
                 if(arrayIndex == index){
                     var book = arrayTable[1]
-                    var pos = cc.p(book.x + _bookParent.x,book.y+_bookParent.y+100)
+                    var pos = cc.p(book.x + _bookParent.x,book.y+_bookParent.y)
                     this.addTipLabel(2,pos)
 
                     arrayTable[1].removeFromParent()
@@ -547,7 +508,7 @@ _moveNode.x = 0
         }
     },
     addTipLabel : function(addTime,pos){
-        var tipLabel = new cc.LabelTTF("+"+String(addTime)+"s",res.Font_MSYH.name,30)
+        var tipLabel = new cc.LabelTTF("+"+String(addTime)+"s","黑体",30)
         tipLabel.setPosition(pos)
         tipLabel.setColor(cc.color(255,0,0,255))
         this.addTimeFromMap(addTime)

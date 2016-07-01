@@ -5,29 +5,18 @@ var GameInfoLayer = cc.Layer.extend({
     ctor:function () {
         this._super()
 
-
         _showType = 0
         this._showLabelTable = new Array()
 
         var bg = new cc.Sprite(res.img_gameInfoBg)
         this.addChild(bg)
 
-        cc.eventManager.addListener({
-            event: cc.EventListener.TOUCH_ONE_BY_ONE,
-            swallowTouches: true,
-            onTouchBegan:function(touch,event){
-                // log("touch point ")
-                return true
-            }
-            },
-        bg);
-
         var ruleLabel = new cc.Sprite(res.img_ruleLabel)
         ruleLabel.y = 100
         this.addChild(ruleLabel)
 
         var workerLabel = new cc.Sprite(res.img_workerLabel)
-        workerLabel.y = 160
+        workerLabel.y = 200
         this.addChild(workerLabel)
 
         this._showLabelTable.push(ruleLabel)
@@ -36,30 +25,28 @@ var GameInfoLayer = cc.Layer.extend({
         workerLabel.setVisible(false)
 
         var ruleBtn = new NewButton(
-        	res.img_ruleInfoBtn,
-        	(133-320)* (WIN_SIZE.width/DefultSize.width),
+        	res.img_commonBtn,
+        	133-320,
             888-480,
         	function(parent){
         		parent.changeLabel(0,parent)
         	},
-        	this//,
-        	// "游戏规则"
-            )
+        	this,
+        	"游戏规则")
         
         var introduceBtn = new NewButton(
-        	res.img_workInfoBtn,
-        	(513-320)* (WIN_SIZE.width/DefultSize.width),
+        	res.img_commonBtn,
+        	513-320,
             888-480,
         	function(parent){
                 parent.changeLabel(1,parent)
             },
-        	this//,
-        	// "制作信息"
-            )
+        	this,
+        	"制作信息")
 
         var closeBtn = new NewButton(
             res.img_closeBtn,
-            (620-320)* (WIN_SIZE.width/DefultSize.width),
+            620-320,
             935-480,
             function(parent){
                 parent.removeFromParent()

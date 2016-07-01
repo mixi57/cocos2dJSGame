@@ -7,11 +7,11 @@
             <key>boyjumpjian01.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{2,2},{42,114}}</string>
+                <string>{{2,66},{42,114}}</string>
                 <key>offset</key>
                 <string>{-11,-82}</string>
                 <key>rotated</key>
-                <false/>
+                <true/>
                 <key>sourceColorRect</key>
                 <string>{{64,169},{42,114}}</string>
                 <key>sourceSize</key>
@@ -20,7 +20,7 @@
             <key>boyjumpjian02.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{166,2},{62,92}}</string>
+                <string>{{132,2},{62,92}}</string>
                 <key>offset</key>
                 <string>{-5,-93}</string>
                 <key>rotated</key>
@@ -33,20 +33,20 @@
             <key>boyjumpjian03.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{102,2},{62,106}}</string>
+                <string>{{2,2},{62,128}}</string>
                 <key>offset</key>
-                <string>{10,-6}</string>
+                <string>{10,-16}</string>
                 <key>rotated</key>
-                <false/>
+                <true/>
                 <key>sourceColorRect</key>
-                <string>{{75,97},{62,106}}</string>
+                <string>{{75,96},{62,128}}</string>
                 <key>sourceSize</key>
                 <string>{192,288}</string>
             </dict>
             <key>boyjumpjian04.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{46,2},{54,110}}</string>
+                <string>{{196,2},{54,110}}</string>
                 <key>offset</key>
                 <string>{-17,-70}</string>
                 <key>rotated</key>
@@ -62,13 +62,13 @@
             <key>format</key>
             <integer>2</integer>
             <key>realTextureFileName</key>
-            <string>boyjumpjian.png</string>
+            <string>boywalkxiao.png</string>
             <key>size</key>
             <string>{256,128}</string>
             <key>smartupdate</key>
-            <string>$TexturePacker:SmartUpdate:c679816f26e4cca779f3cd53ecf8b399$</string>
+            <string>$TexturePacker:SmartUpdate:87539e6de553943e98e29fc214a0a625$</string>
             <key>textureFileName</key>
-            <string>boyjumpjian.png</string>
+            <string>boywalkxiao.png</string>
         </dict>
     </dict>
 </plist>
