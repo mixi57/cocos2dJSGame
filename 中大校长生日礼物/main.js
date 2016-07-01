@@ -52,13 +52,24 @@ cc.game.onStart = function(){
         document.body.removeChild(document.getElementById("cocosLoading"));
 
     // Pass true to enable retina display, disabled by default to improve performance
-    cc.view.enableRetina(false);
+    // cc.view.enableRetina(false);
     // Adjust viewport meta
-    cc.view.adjustViewPort(true);
+    // cc.view.adjustViewPort(true); mixi
     // Setup the resolution policy and design resolution size
-    cc.view.setDesignResolutionSize(640, 1136, cc.ResolutionPolicy.SHOW_ALL);
+    cc.view.setDesignResolutionSize(1136, 640, cc.ResolutionPolicy.SHOW_ALL);
     // The game will be resized when browser size change
     cc.view.resizeWithBrowserSize(true);
+/**
+    window.onerror = function(errorMessage, scriptURI, lineNumber) {
+//      js崩溃统计
+        var message = "=====errorMessage: "+errorMessage+"=====scriptURI: "+scriptURI+"=====lineNumber: "+lineNumber;
+//      var _czc = _czc || [];
+//      _czc.push(["_setAccount", "1254734581"]);
+        _czc.push(["_trackEvent","ReportBug","js-bug: ",message,2,"canvas"]);
+//      
+        return false;
+    };
+**/
     //load resources
     cc.LoaderScene.preload(g_resources, function () {
     	//cc.director.runScene(new ScrollPaintingScene());

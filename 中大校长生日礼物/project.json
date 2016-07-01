@@ -14,7 +14,6 @@
     "jsList" : [
         "src/resource.js",
         "src/app.js",     
-        "src/dragIcon.js",
         "src/scrollPainting.js",
         "src/worldMap.js",
         "src/routes.js",

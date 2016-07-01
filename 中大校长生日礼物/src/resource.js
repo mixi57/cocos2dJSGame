@@ -5,18 +5,9 @@ var res = {
 		
 		Backgound_png : "res/background.png",
 		
-		Icon_png : "res/click_circle.png",
-		Arrow_png : "res/v.png",
+		ScrollPainting_png : "res/scrollPainting.png",
 		
-		
-		
-		ScrollPainting1_png : "res/scrollPainting1.png",
-		ScrollPainting2_png : "res/scrollPainting2.png",
-		ScrollDesc1_png : "res/scrollDesc1.png",
-		ScrollDesc2_png : "res/scrollDesc2.png",
-		ScrollDesc3_png : "res/scrollDesc3.png",
-		ScrollDesc4_png : "res/scrollDesc4.png",
-		
+		WorldMap_png : "res/worldMap.png",
 		LocationLogo_png : "res/locationLogo.png",
 		
 		Timeline1_png : "res/timeline1.png",
@@ -30,11 +21,11 @@ var res = {
 		PresidentPhoto3_png : "res/presidentPhoto3.png",
 		
 		Book1_png : "res/book1.png",
-		Book2_png : "res/book2.png",
-		Book3_png : "res/book3.png",
-		Book4_png : "res/book4.png", 
-		Book5_png : "res/book5.png", 
-		Book6_png : "res/book6.png",
+		Book2_png : "res/book1.png",
+		Book3_png : "res/book1.png",
+		Book4_png : "res/book1.png",
+		Book5_png : "res/book1.png", 
+		Book6_png : "res/book1.png",
 		
 		PresidentPhoto_png : "res/presidentPhoto.png",
 		

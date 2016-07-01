@@ -13,11 +13,10 @@
 var ScrollPaintingLayer = cc.Layer.extend({
 	bg:null,
 	sprite:null,
-	scroll:null,
 	ctor:function () {
 		this._super();
 
-		var size = cc.size(1136, 640);//cc.winSize;
+		var size = cc.winSize;
 
 		this.bg = new cc.Sprite(res.Page1_png);
 		this.bg.attr({
@@ -26,134 +25,80 @@ var ScrollPaintingLayer = cc.Layer.extend({
 		});
 		this.addChild(this.bg);
         //////////////////////////////////////////////////////////
-        // 卷轴画
+        // 卷轴画滚动动作
 
-		
-        this.sprite = new cc.ProgressTimer(new cc.Sprite(res.ScrollPainting1_png));
+        this.sprite = new cc.ProgressTimer(new cc.Sprite(res.ScrollPainting_png));
         this.sprite.type = cc.ProgressTimer.TYPE_BAR;
         this.sprite.midPoint = cc.p(0, 0);
         this.sprite.barChangeRate = cc.p(1, 0); 
         this.addChild(this.sprite);
-        this.sprite.x = 365;//size.width/2;
-        this.sprite.y = size.height/2;
+        this.sprite.x = 523;//size.width/2;
+        this.sprite.y = 323;//size.height/2;
         //this.sprite.runAction(to1.repeatForever());
-        this.sprite.runAction(cc.progressTo(0.01, 200/721*100)); 
-        this.scroll = new cc.Sprite(res.ScrollPainting2_png);
-        this.scroll.x = 200;
-        this.scroll.y = 320; 
-        this.addChild(this.scroll);
-        //this.scroll.setVisible(false); 
-       
-        //this.doAnimation();
+
+        
+
+        var onDesc = cc.callFunc(this.setDescription, this);
+        var delay = cc.delayTime(0.5);  //卷轴完全打开后延迟0.5s，再显示字体
+
+        //var action = cc.sequence(cc.progressTo(4, 100), delay, onDesc);
+
+        var action = cc.progressTo(4, 100);
+        this.sprite.runAction(action);
+
+
+
 	
 		return true;
 	},
-	//加按钮
-	addIcon:function(){
-		cc.log("add icon");
-		this.addChild(new DragIcon());
+
+
+	setDescription:function() { 
 		/*
-		icon = new cc.Sprite(res.Icon_png);
-		icon.attr({
-			x : 1038,
-			y : 320,
-			opacity : 0,
-		});
-		var s = icon.getContentSize();
-		arrow = new cc.Sprite(res.Arrow_png);
-		arrow.attr({
-			x : s.width/2+10, 
-			y : s.height/2-3,
-			opacity : 0
-		});   
-		icon.addChild(arrow);
-		this.addChild(icon);
+		var size = cc.size(300,300);
+		var winSize = cc.winSize;
+		var layout = new ccui.Layout();
+		layout.setContentSize(size);
 		
-		icon.runAction(cc.FadeIn(0.5));
-		arrow.runAction(cc.FadeIn(0.5));
-		arrow.runAction(				
-				cc.RepeatForever(cc.Sequence(
-						cc.MoveTo(0.7, cc.p( s.width/2+6,s.height/2-3)), 
-						cc.MoveTo(0.7, cc.p( s.width/2-6,s.height/2-3))
-				)
-		));*/
-	},
-	doAnimation:function(){ 
+		var layoutRect = layout.getContentSize();
 		
-		//var action = cc.progressTo(4, 100);
-		//this.sprite.runAction(action);
-		var pos = [
-		           {x : 422, y : 397 },
-		           {x : 416, y : 340 },
-		           {x : 410, y : 284 },
-		           {x : 411, y : 231 }	           
-		           ];
-		this.desc = [];
-		for(var i = 0; i < pos.length; ++i){
-			this.desc[i] = new cc.ProgressTimer(new cc.Sprite("res/scrollDesc"+(i+1)+".png"));
-			this.desc[i].type = cc.ProgressTimer.TYPE_BAR;
-			this.desc[i].midPoint = cc.p(0, 0);
-			this.desc[i].barChangeRate = cc.p(1, 0);  
-			this.desc[i].x = pos[i].x;
-			this.desc[i].y = pos[i].y;
-			
-			this.addChild(this.desc[i]);
-			
-		}
-		
-		var scrollTime = 0.5;
-		//卷轴动作
-		//卷轴画动作
-		var w = 721; 
-		var path = [200, 300, 400, 500, 600, w];
-		/*  
-		this.sprite.runAction(cc.Sequence(
-				cc.progressTo(scrollTime, path[0]/w*100),
-				cc.callFunc(function(){
-					this.scroll.setVisible(true);
-				}, this) 
-		));*/
-		var t = scrollTime;
-		for(var i = 1; i < path.length; ++i){
-			this.sprite.runAction(cc.sequence(
-					cc.DelayTime(t),
-					cc.progressTo(scrollTime, path[i]/w*100)
-					
-			));
-			this.scroll.runAction(cc.sequence(
-					cc.DelayTime(t),
-					cc.MoveTo(scrollTime, cc.p(path[i], 320))
-			));
-			t += scrollTime;
-		}
-		this.scroll.runAction(cc.sequence(
-				cc.DelayTime(t),
-				cc.rotateTo(0.05,2),
-				cc.rotateTo(0.05,-2),
-				cc.rotateTo(0.05, 0),
-				cc.rotateTo(0.05,2),
-				cc.rotateTo(0.05,-2),
-				cc.rotateTo(0.05, 0) 
-				//cc.MoveTo(scrollTime, cc.p(path[i], 320))
-		));
-		t += scrollTime;   
- 
+		//layout.setBackGroundColorType(ccui.Layout.BG_COLOR_SOLID);
+		//layout.setBackGroundColor(cc.color(128, 128, 128));
 		
 		
-		//this.sprite.runAction(cc.progressTo(scrollTime, 100));
-		//t += 0.5;
-		//文字展现  
-		for(var i = 0; i < pos.length; ++i){
-			this.desc[i].runAction(cc.Sequence(cc.DelayTime(t),cc.progressTo(0.4, 100)));	
-			t += 0.4;
-		}
-		//按钮出现
-		this.runAction(cc.sequence(cc.DelayTime(t+1), cc.CallFunc(this.addIcon, this)));
-	
-	},
-	addScroll:function(){
-		
+		 // 正文 label的锚点 0.5，0.5
+        var titleLabel = new cc.LabelTTF("论\n语\n ·\n雍\n也", "Arial", 38);
+        var titleSize = titleLabel.getContentSize(); 
+       
+        titleLabel.x = titleSize.height/2 + 10;
+        titleLabel.y = size.height - titleSize.width/2 - 10;
+        cc.log( "%d, %d", titleLabel.x,  titleLabel.y); 
+        
+        titleLabel.rotation = 270;
+        layout.addChild(titleLabel, 100);
+        
+        var bodyLabel = new cc.LabelTTF("    己欲立而\n立人\n    己欲达而\n达人", "Arial", 38);
+	    //bodyLabel.setDimensions(cc.Size(100,100));
+        var bodySize = bodyLabel.getContentSize();
+        
+	    bodyLabel.x = bodySize.height/ 2 + 10; //字距离左边的距离
+	    bodyLabel.y = bodySize.width/2 + 10;  //字距离下边的距离
+	    bodyLabel.rotation = 270;
+
+	    layout.addChild(bodyLabel, 100);
+	    
+	    //layout.setFlippedX(true);
+	    layout.setPosition(winSize.width/2-size.width/2,winSize.height/2-size.height/2); 
+	   
+	    this.addChild(layout, 100);
+*/
+		var winSize = cc.winSize; 
+		var description = new DescriptionLayer();
+		description.setPosition(winSize.width/2, winSize.height/2);
+		//description.setRotation(270);
+	    this.addChild(description, 100);
 	}
+
 });
 
 // layer的锚点是 0.5， 0.5
@@ -163,7 +108,7 @@ var DescriptionLayer = cc.Layer.extend({
 		var size = cc.size(640, 1136);
 		this.setContentSize(size);
 		this.setAnchorPoint(cc.p(0.5,0.5));
-		var winSize = cc.size(1136, 640);//cc.winSize;
+		var winSize = cc.winSize;
 		var richText = new ccui.RichText();
 		
         richText.ignoreContentAdaptWithSize(false);

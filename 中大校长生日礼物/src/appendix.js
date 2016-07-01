@@ -222,7 +222,8 @@ var description = "附黄达人校长2011至2015年间所有调研走访的所�
 2015年3月24日，在长春给长春中医药大学讲课。\n\
 2015年3月30日，在武汉给武昌工学院讲课。"
 */
-var description = ["2011年2月15日，在北京访问中国人民大学校长纪宝成校长。",
+var description = ["附黄达人校长2011至2015年间所有调研走访的所有行程：",
+                   "2011年2月15日，在北京访问中国人民大学校长纪宝成校长。",
                    "2011年2月26日，在长沙访问中南大学黄伯云校长。",
                    "2011年3月2日，在北京访问哈尔滨工业大学王树国校长。",
                    "2011年3月3日，在北京访问中国农业大学瞿振元书记。",
@@ -450,10 +451,10 @@ var AppendixLayer = cc.Layer.extend({
 	ctor:function(){
 		this._super();
 
-		var size = cc.size(1136, 640); //cc.winSize;
+		var size = cc.winSize;
 
 		//白色背景
-		this.bg = new cc.LayerColor(cc.color("#ffffff"),1136,640);
+		this.bg = new cc.LayerColor(cc.color("#ffffff"));
 		this.addChild(this.bg);
 		
 		//滚动框
@@ -490,7 +491,7 @@ var AppendixLayer = cc.Layer.extend({
 			desc[i].attr({
 				x:curWidth + descSize.height/2,
 				y: descSize.width/2 + 30,
-				rotation:-90, 
+				rotation:-90,
 				color:cc.color("#000000")
 			});
 			curWidth += descSize.height + 15;
