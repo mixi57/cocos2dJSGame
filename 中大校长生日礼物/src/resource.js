@@ -10,11 +10,11 @@ var res = {
 		ScrollDesc3_png : "res/scrollDesc3.png",
 		ScrollDesc4_png : "res/scrollDesc4.png",
 		
-		Timeline1_png : "res/timeline1.jpg",
-		Timeline2_png : "res/timeline2.jpg",
-		Timeline3_png : "res/timeline3.jpg",
-		Timeline4_png : "res/timeline4.jpg",
-		Boat_png : "res/boat.png", 
+		Timeline1_png : "res/timeline1.png",
+		Timeline2_png : "res/timeline2.png",
+		Timeline3_png : "res/timeline3.png",
+		Timeline4_png : "res/timeline4.png",
+		Boat_png : "res/boat.png",
 		
 		
 		LocationLogo_png : "res/locationLogo.png",
@@ -31,12 +31,12 @@ var res = {
 		
 		
 		
-		PhotoWall_png : "res/photoWall.jpg",
+		PhotoWall_png : "res/photoWall.png",
 		PhotoWallBg_png : "res/photoWallBg.jpg",
 		PhotoDesc_png : "res/photoDesc.png",
-		PresidentPhoto1_png : "res/presidentPhoto1.jpg",
-		PresidentPhoto2_png : "res/presidentPhoto2.jpg",
-		PresidentPhoto3_png : "res/presidentPhoto3.jpg",
+		PresidentPhoto1_png : "res/presidentPhoto1.png",
+		PresidentPhoto2_png : "res/presidentPhoto2.png",
+		PresidentPhoto3_png : "res/presidentPhoto3.png",
 		
 		Book1_png : "res/book1.png",
 		Book2_png : "res/book2.png",
@@ -47,67 +47,24 @@ var res = {
 		
 		
 		
-		FlamingoLogo_png : "res/flamingoLogo.png", 
+		FlamingoLogo_png : "res/flamingoLogo.png",
 		
-		Page1_png : "res/1.jpg",
-		Page6_png : "res/6.jpg",
-		Page7_png : "res/7.jpg",
-		Page9_png : "res/9.jpg",
-		Page10_png : "res/10.jpg",
-				
-		BM_font : "res/font/hk.fnt" ,
-		BM_font_png : "res/font/hk_0.png" ,
-
-		label_p2 : "res/label_p2.png",
-		Appendix_jpg : "res/appendix.jpg",
-			//,
-		// BM_font_bmfc : "res/font/hk.bmfc"
-		/*
-		Font_1: 
-    {
-        type:"font",
-        name:"xingkai",
-        srcs:["res/fonts/xingkai.ttf"]
-    },
-    Font_2:
-    {
-        type:"font",
-        name:"comic",
-        srcs:["res/fonts/comic.ttf"]
-    },
-    Font_3:
-    {
-        type:"font",
-        name:"private_bold",
-        srcs:["res/fonts/private_bold.ttf"]
-    },
-    */
-    // Font_4:
-    //     {
-    //     type:"font",
-    //     name:"CourierNew",//"res/fonts/Courier New.eot",
-    //     srcs:[ "res/fonts/Courier New.eot"]
-    // },
-    
-    // Font_5:
-    //     {
-    //     type:"font",
-    //     name:"Xingkaittc",//"res/fonts/Courier New.eot",
-    //     srcs:[ "res/fonts/Courier New.ttf"]
-    // },
-
+		Page1_png : "res/1.png",
+		Page6_png : "res/6.png",
+		Page7_png : "res/7.png",
+		Page9_png : "res/9.png",
+		Page10_png : "res/10.png",
+		
+		BgMusic : "res/background.ogg",
+		
+		Font_Xingkai : {
+			type:"font",
+			name:"xingKai",
+			srcs:["res/font/xingKai.TTF"]
+		}
 };
 
-
-
-var g_resources = [
-        {
-        type:"font",
-        name:"Xingkaittc",//"res/fonts/Courier New.eot",
-        srcs:[ "res/fonts/xingkai.ttf"]
-    },
-
-];
+var g_resources = [];
 for (var i in res) {
 	g_resources.push(res[i]);
 }

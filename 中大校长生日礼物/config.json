@@ -1,8 +1,8 @@
 {
   "init_cfg": {
-    "isLandscape": true,
+    "isLandscape": false,
     "isWindowTop": false,
-    "name": "giftProject",
+    "name": "giftProjectPortraitLast",
     "width": 1136,
     "height": 640,
     "entry": "main.js",

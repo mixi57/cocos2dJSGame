@@ -106,18 +106,7 @@ var WorldMapLayer = cc.Layer.extend({
 			y: size.height / 2
 			
 		});
-		this.addChild(this.sprite); 
-		
-		var footStep = new cc.LabelBMFont("近五年黄校长调研走访足迹分布图", res.BM_font);
-		footStep.attr({ 
-			x : 180, //arrayOfRoutePos[i],
-			y : size.height/2,
-			textAlign : cc.TEXT_ALIGNMENT_CENTER, 
-			rotation : -90,
-			scale : 1.2,
-		});
-		this.addChild(footStep); 
-		
+		this.addChild(this.sprite);
 
 		//蒙版
 		this.mask = new cc.Sprite(res.MaskMap_png);
@@ -128,6 +117,7 @@ var WorldMapLayer = cc.Layer.extend({
 		});
 		this.mask.setVisible(false);
 		this.addChild(this.mask);
+		this.mask.setVisible(false);
 		
 		//中国地图
 		this.layer1 = new cc.Layer();
@@ -180,17 +170,13 @@ var WorldMapLayer = cc.Layer.extend({
 	doAnimation:function(){
 		var size = cc.size(1136, 640);//cc.winSize;
 		var delay = cc.delayTime(3);
-		 
+		this.mask.setVisible(true);
 		var scaleAndMove = cc.spawn(
 				cc.fadeIn(0.5),
 				cc.scaleTo(2, 1, 1), 
-				cc.moveTo(2,cc.p(size.width/2, size.height/2)),
-				cc.callFunc(function(){
-					this.mask.setVisible(true);
-				},this)
+				cc.moveTo(2,cc.p(size.width/2, size.height/2))
 		);
 		this.China.runAction(cc.sequence(
-				cc.delayTime(2),				
 				scaleAndMove,
 				cc.delayTime(1),
 				cc.callFunc(this.setLocation, this)
@@ -199,6 +185,86 @@ var WorldMapLayer = cc.Layer.extend({
 	},
 	
 	setLocation:function(){		
+		
+
+		/*
+		var arrayOfLogos = [];
+		var arrayOfDesc = [];
+		var arrayOfText = [];
+
+		var fadeIn = cc.fadeIn(3.0);
+		var delaySecond = 0;
+		var delayInterval = 0.1;
+		var deltaT = 0.1; 
+
+		for(var i = 0; i < arrayOfLocations.length; i++) {
+			//小气球
+			arrayOfLogos[i] = new cc.ProgressTimer(new cc.Sprite(res.LocationLogo_png));
+			arrayOfLogos[i].type = cc.ProgressTimer.TYPE_BAR;
+			arrayOfLogos[i].midPoint = cc.p(1, 0);
+			arrayOfLogos[i].barChangeRate = cc.p(1, 0);  
+			arrayOfLogos[i].x = arrayOfLocations[i].x;
+			arrayOfLogos[i].y = arrayOfLocations[i].y;
+			this.layer1.addChild(arrayOfLogos[i],100);
+			
+			//白色小背景
+			arrayOfDesc[i] = new cc.Sprite(res.LocationBg_png);
+			arrayOfDesc[i].attr({
+				x:arrayOfLocations[i].x-30,
+				y:arrayOfLocations[i].y-100,
+				//opacity:0,
+				rotation:-90 
+			});
+			var s = arrayOfDesc[i].getContentSize();
+			
+			//文字描述
+			arrayOfText[i] = new cc.LabelTTF(locationDesc[i], "Arial", 20);
+			arrayOfText[i].attr({
+				x : s.width/2,
+				y : s.height/2,
+				textAlign : cc.TEXT_ALIGNMENT_CENTER,
+				color : cc.color("#000000"),
+			});
+			arrayOfDesc[i].addChild(arrayOfText[i]);
+			this.layer1.addChild(arrayOfDesc[i]);
+			
+			arrayOfDesc[i].setVisible(false);
+									
+			var delay = cc.delayTime(delaySecond);
+			delaySecond += delayInterval;
+			
+
+			arrayOfDesc[i].runAction(cc.sequence(
+					delay, 
+					cc.callFunc(this.setVisible, arrayOfDesc[i], true),
+					cc.delayTime(deltaT),
+					cc.callFunc(this.removeFromParentAndCleanup, arrayOfDesc[i], true)
+					
+			));  
+			arrayOfLogos[i].runAction(cc.sequence(
+					delay, 
+					cc.progressTo(0.1, 100), 
+					cc.delayTime(deltaT),
+					cc.callFunc(this.setVisible, arrayOfLogos[i], false)
+			)); 			 
+		}
+		for(var i = 0; i < arrayOfLocations.length; i++) {
+			arrayOfLogos[i].runAction(cc.sequence(
+					cc.delayTime(delaySecond),
+					cc.callFunc(this.setVisible, arrayOfLogos[i], true)
+			)); 	
+		}
+		
+		
+		var moveTime = 0.5;
+		//中国地图往左边划走
+		this.layer1.runAction(cc.sequence(
+				cc.delayTime(delaySecond+2),
+				cc.callFunc(this.moveTo, this.layer1, {t:moveTime-moveStay, x:0, y:-640})
+				
+		));
+		 */
+		
 		//delayInterval 冒一次小气球总共用的时间
 		//delaySecond : 从调用开始到第一个小气球开始冒的时间
 		//deltaT : 小气球出来到消失的时间
@@ -220,9 +286,7 @@ var WorldMapLayer = cc.Layer.extend({
 				}),
 				cc.delayTime(delayInterval*ChinaLocation.length+stayTime),
 				//向左移走
-				cc.callFunc(this.moveTo, this.layer1, {t:moveTime-moveStay, x:0, y:-640}),
-				cc.delayTime(moveTime),
-				cc.callFunc(this.removeFromParentAndCleanup,this.layer1,true)
+				cc.callFunc(this.moveTo, this.layer2, {t:moveTime-moveStay, x:0, y:-640})
 		));
 		delaySecond += delayInterval*ChinaLocation.length +stayTime;
 		
@@ -242,9 +306,7 @@ var WorldMapLayer = cc.Layer.extend({
 					deltaT : deltaT
 				}),
 				cc.delayTime(delayInterval*JanPanLocation.length+stayTime),
-				cc.callFunc(this.moveTo, this.layer2, {t:moveTime-moveStay, x:0, y:640}),
-				cc.delayTime(moveTime),
-				cc.callFunc(this.removeFromParentAndCleanup,this.layer2,true)
+				cc.callFunc(this.moveTo, this.layer2, {t:moveTime-moveStay, x:0, y:640})
 		));
 		delaySecond += delayInterval*JanPanLocation.length +stayTime + moveTime;
 
@@ -262,9 +324,7 @@ var WorldMapLayer = cc.Layer.extend({
 					deltaT : deltaT
 				}),
 				cc.delayTime(delayInterval*SingaporeLocation.length+stayTime),
-				cc.callFunc(this.moveTo, this.layer3, {t:moveTime-moveStay, x:1136, y:-640}),
-				cc.delayTime(moveTime),
-				cc.callFunc(this.removeFromParentAndCleanup,this.layer3,true)
+				cc.callFunc(this.moveTo, this.layer3, {t:moveTime-moveStay, x:1136, y:-640})
 		));		
 		delaySecond += delayInterval*SingaporeLocation.length + stayTime + moveTime;
 		
@@ -284,7 +344,6 @@ var WorldMapLayer = cc.Layer.extend({
 				cc.delayTime(delayInterval*AmericaLocation.length+stayTime),
 				cc.callFunc(this.moveTo, this.layer4, {t:moveTime-moveStay, x:-300, y:-640}),
 				cc.delayTime(moveTime),
-				cc.callFunc(this.removeFromParentAndCleanup,this.layer3,true),
 				cc.callFunc(this.addIcon, this)
 		));
 		
@@ -331,13 +390,12 @@ var WorldMapLayer = cc.Layer.extend({
 			var s = arrayOfDesc[i].getContentSize();
 
 			//文字描述
-			//arrayOfText[i] = new cc.LabelTTF(locationDesc[i], "Arial", 20);
-			arrayOfText[i] = new cc.LabelBMFont(locationDesc[i], res.BM_font);
+			arrayOfText[i] = new cc.LabelTTF(locationDesc[i], "Arial", 20);
 			arrayOfText[i].attr({
 				x : s.width/2,
 				y : s.height/2,
 				textAlign : cc.TEXT_ALIGNMENT_CENTER,
-				//color : cc.color("#000000"),
+				color : cc.color("#000000"),
 			});
 			arrayOfDesc[i].addChild(arrayOfText[i]);
 			layer.addChild(arrayOfDesc[i]);
@@ -371,15 +429,10 @@ var WorldMapLayer = cc.Layer.extend({
 		}
 	},
 	addIcon:function(){
-		//this.mask.setVisible(false);
-		this.mask.runAction(cc.sequence(
-				cc.fadeOut(0.5),
-				cc.callFunc(this.removeFromParentAndCleanup,this.mask,true)				
-		));
+		this.mask.setVisible(false);
 		this.addChild(new DragIcon());
-	},
-	updatePage:function(){
-		
 	}
-
+	
+	
+	
 });

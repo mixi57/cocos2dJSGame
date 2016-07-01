@@ -1,5 +1,5 @@
-//var audioEngine = cc.audioEngine;
-//var MUSIC_FILE = cc.sys.os == cc.sys.OS_WP8 || cc.sys.os == cc.sys.OS_WINRT ? res.BgMusic :  res.BgMusic;
+var audioEngine = cc.audioEngine;
+var MUSIC_FILE = cc.sys.os == cc.sys.OS_WP8 || cc.sys.os == cc.sys.OS_WINRT ? res.BgMusic :  res.BgMusic;
 
 var PageLayer = cc.Layer.extend({
 	pageView:null,
@@ -11,7 +11,7 @@ var PageLayer = cc.Layer.extend({
 		this._super();
 		
 		// 添加背景音乐
-		//audioEngine.playMusic(MUSIC_FILE, true);
+		audioEngine.playMusic(MUSIC_FILE, true);
 	 	
 		var size = cc.size(1136, 640); 
 		
@@ -141,9 +141,6 @@ var PageLayer = cc.Layer.extend({
 						selfPointer.lastIndex++;
 						var i = selfPointer.lastIndex;
 						selfPointer.pageView.scrollToPage(i);   needUpdatePos =false;
-						if (i+1 < maxPage){
-							selfPointer.pageLayout[i+1].layer.updatePage(); 
-						}
 						selfPointer.begin = 0;
 						selfPointer.end = 0; 
 						if(!selfPointer.isDisplay[i] && selfPointer.pageLayout[i].layer.doAnimation){
@@ -153,19 +150,16 @@ var PageLayer = cc.Layer.extend({
 						if(i == maxPage-1){
 							selfPointer.pageLayout[i].layer.setScrollTouch();
 						}
-						selfPointer.display(i, maxPage);
 					}
-				}  
+				} 
 				//向下拖动				
 				else if(selfPointer.begin - selfPointer.end > 50){
 					if(selfPointer.lastIndex > 0){
 						selfPointer.lastIndex--;
 						var i = selfPointer.lastIndex;
 						selfPointer.pageView.scrollToPage(i);  needUpdatePos = false;
-						
 						selfPointer.begin = 0;
 						selfPointer.end = 0; 
-						selfPointer.display(i, maxPage);
 					}
 				}
 				if(needUpdatePos){
@@ -183,36 +177,6 @@ var PageLayer = cc.Layer.extend({
 		this._listener = listener;
 		return true; 
 	}, 
-	//显示第i页时，将不相邻的setEnable(false)
-	display:function(i, maxPage){
-		var preFrom, preTo, postFrom, postTo;
-		if(i >= 2){
-			preFrom = 0; 
-			preTo = i-1;
-		}else {
-			preFrom = 0; 
-			preTo = -1;
-		}
-		if(i <= maxPage-3){
-			postFrom = i+1;
-			postTo = maxPage-1;
-		}
-		else{
-			postFrom = 0;
-			postTo = -1;
-		}
-		for(var j = preFrom; j <= preTo; ++j){
-			this.pageLayout[j].setEnabled(false);
-		}
-		for(var j = postFrom; j <= postTo; ++j){
-			this.pageLayout[j].setEnabled(false);
-		}
-		if (i > 0)
-			this.pageLayout[i-1].setEnabled(true);
-		if (i < maxPage-1)
-			this.pageLayout[i+1].setEnabled(true);
-		this.pageLayout[i].setEnabled(true);
-	},
 	
 	
 	pageViewEvent:function(){

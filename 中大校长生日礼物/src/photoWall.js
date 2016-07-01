@@ -25,7 +25,7 @@ var PhotoWallLayer = cc.Layer.extend({
 		this.bg.attr({
 			x: size.width /  2,
 			y: size.height / 2,
-			scale : 4, 
+			scale : 4,
 		});
 		this.addChild(this.bg);
 		
@@ -34,8 +34,7 @@ var PhotoWallLayer = cc.Layer.extend({
 		this.photoWall.attr({
 			x: size.width /4*3,
 			y: size.height / 2,
-			scale : 0.5,
-			opacity : 0
+			scale : 0.5
 		});
 		this.addChild(this.photoWall);
 		
@@ -47,21 +46,21 @@ var PhotoWallLayer = cc.Layer.extend({
 		this.photo1.attr({
 			x: 236,//size.width / 2,
 			y: 318,//size.height / 2
-			scale: 1.4,
+			//scale: 0.5,
 			//rotation: -90
 		});
 		
 		this.photo2.attr({
 			x: 664, //size.width / 2,
 			y: 156, //size.height / 2
-			scale: 1.1,
+			//scale: 0.5,
 			rotation: 0
 		});
-		 
+		
 		this.photo3.attr({
 			x: 857, //size.width / 2,
 			y: 467, //size.height / 2
-			scale: 1.0,
+			//scale: 0.5,
 			//rotation: -40
 		});
 		
@@ -78,51 +77,44 @@ var PhotoWallLayer = cc.Layer.extend({
 
 		var onDesc = cc.callFunc(this.setDesc, this);
 
-		var delay = cc.delayTime(1.5);
+		var delay = cc.delayTime(1);
 
 		
 		var t1 = 2;
-		var pos = [
-		           {x : 1027, y: 201},
-		           {x : 689, y: 476},
-		           {x : 226, y: 162 },		           
-		           ];
 		var action = cc.sequence(
-				delay, 
+				cc.delayTime(1), 
 				//相片缩小回落到校长的图片墙上
 				cc.callFunc(function(){
 					this.photo1.runAction(
 							cc.spawn(
-									cc.scaleTo(t1, 1, 1),
-									//cc.rotateTo(t1, 360),
-									cc.moveTo(t1, cc.p(pos[0].x, pos[0].y))							
+									cc.scaleTo(t1, 0.67, 0.68),
+									//cc.rotateTo(t1, -90),
+									cc.moveTo(t1, cc.p(1050, 196))
 							));
 
-					this.photo2.runAction(							
+					this.photo2.runAction(
 							cc.spawn(
-									cc.scaleTo(t1, 1, 1),
-									//cc.rotateTo(t1, 360),
-									cc.moveTo(t1, cc.p(pos[1].x, pos[1].y))
+									cc.scaleTo(t1, 0.88,0.96),
+									//cc.rotateTo(t1, -450),
+									cc.moveTo(t1, cc.p(687, 479))
 							));
 					this.photo3.runAction(
 							cc.spawn(
-									cc.scaleTo(t1, 1, 1),
-									//cc.rotateTo(t1, 360),
-									cc.moveTo(t1, cc.p(pos[2].x, pos[2].y))
-							));
+									cc.scaleTo(t1, 0.96,0.93),
+									//cc.rotateTo(t1, -90),
+									cc.moveTo(t1, cc.p(208, 198))
+							));  
 
 				}, this),
 				//图片墙放大充满整屏
-				//cc.delayTime(t1/2),
-				cc.fadeIn(t1/2),
-				cc.spawn(cc.moveTo(t1/2,cc.p(size.width/2, size.height/2)), cc.scaleTo(t1/2, 1, 1)),
-//				cc.callFunc(function(){
-//					this.photo1.setVisible(false);
-//					this.photo2.setVisible(false);
-//					this.photo3.setVisible(false);
-//
-//				}, this),
-				delay.clone(),  
+				cc.spawn(cc.moveTo(2,cc.p(size.width/2, size.height/2)), cc.scaleTo(2, 1, 1)),
+				cc.callFunc(function(){
+					this.photo1.setVisible(false);
+					this.photo2.setVisible(false);
+					this.photo3.setVisible(false);
+
+				}, this),
+				cc.delayTime(1),  
 				//图片墙中间板块呈现矩形蒙版
 				cc.callFunc(function(){
 					this.photoDesc = new cc.Sprite(res.PhotoDesc_png);
@@ -168,8 +160,5 @@ var PhotoWallLayer = cc.Layer.extend({
 		//this.desc.setOpacity(0);
 		descBackground.runAction(cc.fadeIn(2));
 		//this.desc.runAction(cc.fadeIn(2));
-	},
-	updatePage:function(){
-		
 	}
 });

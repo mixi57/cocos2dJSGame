@@ -37,8 +37,7 @@ var ScrollPaintingLayer = cc.Layer.extend({
         this.sprite.x = 365;//size.width/2;
         this.sprite.y = size.height/2;
         //this.sprite.runAction(to1.repeatForever());
-        this.sprite.percentage = 200/721*100;
-        //this.sprite.runAction(cc.progressTo(0.01, 200/721*100)); 
+        this.sprite.runAction(cc.progressTo(0.01, 200/721*100)); 
         this.scroll = new cc.Sprite(res.ScrollPainting2_png);
         this.scroll.x = 200;
         this.scroll.y = 320; 
@@ -61,7 +60,7 @@ var ScrollPaintingLayer = cc.Layer.extend({
 		var pos = [
 		           {x : 422, y : 397 },
 		           {x : 416, y : 340 },
-		           {x : 418, y : 284 },
+		           {x : 410, y : 284 },
 		           {x : 411, y : 231 }	           
 		           ];
 		this.desc = [];
@@ -75,20 +74,28 @@ var ScrollPaintingLayer = cc.Layer.extend({
 			
 			this.addChild(this.desc[i]);
 			
-		} 
+		}
 		
-		var scrollTime = 0.5;
+		var scrollTime = 0.1;
+		//卷轴动作
 		//卷轴画动作
-		var w = 741; 
+		var w = 721; 
 		var path = [200, 300, 400, 500, 600, w];
-		var t = scrollTime+0.5;
+		/*  
+		this.sprite.runAction(cc.sequence(
+				cc.progressTo(scrollTime, path[0]/w*100),
+				cc.callFunc(function(){
+					this.scroll.setVisible(true);
+				}, this) 
+		));*/
+		var t = scrollTime;
 		for(var i = 1; i < path.length; ++i){
 			this.sprite.runAction(cc.sequence(
 					cc.delayTime(t),
 					cc.progressTo(scrollTime, path[i]/w*100)
 					
 			));
-			this.scroll.runAction(cc.sequence( 
+			this.scroll.runAction(cc.sequence(
 					cc.delayTime(t),
 					cc.moveTo(scrollTime, cc.p(path[i], 320))
 			));
@@ -99,8 +106,8 @@ var ScrollPaintingLayer = cc.Layer.extend({
 				cc.rotateTo(0.05,2),
 				cc.rotateTo(0.05,-2),
 				cc.rotateTo(0.05, 0),
-				cc.rotateTo(0.05,1),
-				cc.rotateTo(0.05,-1),
+				cc.rotateTo(0.05,2),
+				cc.rotateTo(0.05,-2),
 				cc.rotateTo(0.05, 0) 
 				//cc.moveTo(scrollTime, cc.p(path[i], 320))
 		));
@@ -118,9 +125,6 @@ var ScrollPaintingLayer = cc.Layer.extend({
 		//按钮出现
 		this.runAction(cc.sequence(cc.delayTime(t+1), cc.callFunc(this.addIcon, this)));
 	
-	},
-	updatePage:function(){
-		
 	}
 });
 
@@ -166,10 +170,6 @@ var DescriptionLayer = cc.Layer.extend({
         this.rotation = 270;
         
         return true;
-	}
-	,
-	updatePage:function(){
-		
 	}
 });
 

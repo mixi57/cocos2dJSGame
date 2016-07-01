@@ -30,7 +30,7 @@ var BigPhotoLayer = cc.Layer.extend({
 		this.desc2.midPoint = cc.p(0, 0);
 		this.desc2.barChangeRate = cc.p(1, 0); 
 		this.addChild(this.desc2);
-		this.desc2.x = 329;
+		this.desc2.x = 335;
 		this.desc2.y = 121; 
 		
 		
@@ -52,9 +52,6 @@ var BigPhotoLayer = cc.Layer.extend({
 					this.addChild(new DragIcon());
 				}, this)
 		));
-		
-	},
-	updatePage:function(){
 		
 	}
 });

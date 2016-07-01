@@ -39,26 +39,22 @@ var PublishLayer = cc.Layer.extend({
 	},
 	setAppendixTips:function(){
 		var size = cc.size(1136, 640);//cc.winSize;
-		//var tips = new cc.LabelTTF("附黄达人校长\n\n2011至2015年间所有调研走访的所有行程", "Arival", 30);
-		var tips = new cc.LabelBMFont("附黄达人校长\n\n2011至2015年间所有调研走访的所有行程", res.BM_font);
+		var tips = new cc.LabelTTF("附黄达人校长\n\n2011至2015年间所有调研走访的所有行程", "Arival", 30);
 		tips.attr({
 			x: size.width/2,
 			y: size.height/2,
 			rotation:-90,
-			scale : 0.7,
+			scale : 1,
 			textAlign : cc.TEXT_ALIGNMENT_CENTER,
 			color:cc.color("#000000")
 		});
 		this.addChild(tips);
 		tips.runAction(cc.sequence(
-				cc.scaleTo(1, 1.3, 1.3),
+				cc.scaleTo(1, 1, 1),
 				cc.callFunc(function(){
 					this.addChild(new DragIcon());
 				}, this)
 				
 		));
-	},
-	updatePage:function(){
-		
 	}
 });

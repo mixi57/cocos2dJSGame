@@ -18,8 +18,4 @@ var BirthdayLayer = cc.Layer.extend({
 	doAnimation:function(){
 		this.addChild(new DragIcon());
 	}
-	,
-	updatePage:function(){
-		
-	}
 });

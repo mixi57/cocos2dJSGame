@@ -1,4 +1,3 @@
-var labelFontName = "/Library/Fonts/华文黑体.ttf";//"行楷";//"黑体";//"Marker Felt";//"Xingkaittc";//"res\\xingkai.ttf";//"Songti";//"NISC18030";//"HeadlineA";//"华文黑体"
 // 具体行程呈现的位置
 var arrayOfRoutePos = [
 287,358,445,527,608,692,776,861,938,1022,1112,
@@ -130,7 +129,6 @@ var RoutesLayer = cc.Layer.extend({
 //	count:0,
 	scrollView:null,
 	boat:null,
-	labelBathNode:null,
 	ctor:function(){
 		this._super();
 		 
@@ -145,9 +143,6 @@ var RoutesLayer = cc.Layer.extend({
 		this.addChild(this.scrollView);
 		this.scrollView.setInnerContainerSize(cc.size(1136*4, 640));
 		
-//		this.labelBathNode = new cc.SpriteBatchNode(res.BM_font);
-//        this.scrollView.getInnerContainer().addChild(this.labelBathNode)
-
 		//4张时间轴背景图
 		var timeline1 = new cc.Sprite(res.Timeline1_png);
 		timeline1.attr({ 
@@ -174,15 +169,6 @@ var RoutesLayer = cc.Layer.extend({
 		this.scrollView.getInnerContainer().addChild(timeline3);
 		this.scrollView.getInnerContainer().addChild(timeline4);
 		
-		var label = new cc.Sprite(res.label_p2);
-		label.attr({
-			//anchorPoint : cc.p(1,0),
-			x : 628,//62,
-			y : 330,//11
-		})
-		 label.setAnchorPoint(cc.p(0.5,0.5));
-		// timeline1.addChild(label);
-		
 		//小船
 		this.boat = new cc.Sprite(res.Boat_png);
 		this.boat.attr({ 
@@ -191,7 +177,9 @@ var RoutesLayer = cc.Layer.extend({
 		});
 		this.scrollView.getInnerContainer().addChild(this.boat);
 		//this.boat.setVisible(false);
-				
+		
+			
+		
 		return true;
 	},
 	
@@ -249,67 +237,33 @@ var RoutesLayer = cc.Layer.extend({
 		
 		//this.boat.setVisible(true);
 		
-		var t = 0.5;
+		var t = 1;
 		var v = 90;
-		var deltaV = 1;
+		var deltaV = 2;
 		var deltaT = 0.5; //没行字出现的时间
-
-        var index = 0;
-        var selfThis = this;
-		var updateLabelAndBoat = function(){
-			if(index >= arrayOfBoatPos.length){
-						//最后的处理
-		deltaT *= 1.5;
-		selfThis.boat.runAction(cc.sequence(
-				cc.delayTime(t), 
-				cc.moveTo(deltaT, cc.p(4112, 304)),	
-				cc.moveTo(deltaT, cc.p(4166, 257)),
-				cc.moveTo(deltaT, cc.p(4209, 174))
-		));
-		selfThis.runAction(cc.sequence(
-				cc.delayTime(t), 
-				cc.callFunc(selfThis.scrollTo, selfThis, {x : 1136*4, t:deltaT*3}),
-				cc.delayTime(deltaT*3),
-				cc.callFunc(function(){
-					selfThis.addChild(new DragIcon());
-				}, selfThis)
-		));
-
-				return ;
-			}
-			cc.log("updateLabelAndBoat index ",index);
-            if(index < 14){
-            	v += deltaV ; //初始速度加上加速度
-            }else if(index > 30){
-            	v -= deltaV;
-            }
-            if(index == 0){
-            	deltaT = 90/v;
-            }else {
-            	deltaT = (arrayOfBoatPos[index].x - arrayOfBoatPos[index-1].x)/v;
-            }
-            var i = index ;
-            var boatTime = 0;
-            if (i==0)boatTime =t;
-            selfThis.boat.runAction(cc.sequence(
-					cc.delayTime(boatTime), 
-					cc.moveTo(deltaT, cc.p(arrayOfBoatPos[i].x, arrayOfBoatPos[i].y)),
-					// cc.callFunc(updateLabelAndBoat,this,{labelIndex = i})
-					cc.callFunc(function(){
-						index = index+1;
-                        updateLabelAndBoat();
-					})			
+		for(var i = 0; i < arrayOfBoatPos.length; ++i){
+			if(i < 14 )
+				v += deltaV;  //速度
+			else if(i > 30)
+				v -= deltaV;
+			if(i == 0)
+				deltaT = 90/v;
+			else
+				deltaT = (arrayOfBoatPos[i].x - arrayOfBoatPos[i-1].x)/v;
+				
+			//小船移动 
+			this.boat.runAction(cc.sequence(
+					cc.delayTime(t), 
+					cc.moveTo(deltaT, cc.p(arrayOfBoatPos[i].x, arrayOfBoatPos[i].y))				
 			));
-
 			//日期
-			arrayOfDates[i] = new cc.LabelTTF(arrayOfDateDesc[i], labelFontName,20);//"HeadlineA", 20);
-			// arrayOfDates[i] = new cc.LabelBMFont(arrayOfDateDesc[i], res.BM_font);
+			arrayOfDates[i] = new cc.LabelTTF(arrayOfDateDesc[i], "Arial", 20);
 			var y = arrayOfBoatPos[i].y-arrayOfDates[i].getContentSize().width/2-22;
 			if(y-arrayOfDates[i].getContentSize().width/2 < 11){
 				cc.log("nono nono ");
 				y = 11+arrayOfDates[i].getContentSize().width/2; 
 			}
-
+				
 			arrayOfDates[i].attr({ 
 				x : arrayOfBoatPos[i].x+42, //arrayOfRoutePos[i],
 				y : y,//arrayOfBoatPos[i].y-arrayOfDates[i].getContentSize().width/2-22,//middle-30-arrayOfDates[i].getContentSize().width/2, 
@@ -319,50 +273,58 @@ var RoutesLayer = cc.Layer.extend({
 				scale : 0.5,
 				opacity : 0
 			});
-			
-			selfThis.scrollView.getInnerContainer().addChild(arrayOfDates[i],5);
+			this.scrollView.getInnerContainer().addChild(arrayOfDates[i]);
 			arrayOfDates[i].runAction(cc.sequence(
 					cc.delayTime(t+0.2), 
-					cc.spawn(cc.fadeIn(deltaT), 
-					cc.scaleTo(deltaT, 1, 1))				
+					cc.spawn(cc.fadeIn(deltaT), cc.scaleTo(deltaT, 1, 1))					
 			));
-
 			//具体行程
-			arrayOfRoutes[i] = new cc.LabelTTF(arrayOfRouteDesc[i], labelFontName,20);//"HeadlineA", 20);
-			//
-			// arrayOfRoutes[i] = new cc.LabelBMFont(arrayOfRouteDesc[i], res.BM_font);
+			arrayOfRoutes[i] = new cc.LabelTTF(arrayOfRouteDesc[i], "Arial", 20);	
 			arrayOfRoutes[i].attr({
 				x : arrayOfBoatPos[i].x+42,//arrayOfRoutePos[i],
 				y : arrayOfBoatPos[i].y+arrayOfRoutes[i].getContentSize().width/2+22,//middle+30+arrayOfRoutes[i].getContentSize().width/2,		
 				color : cc.color("#000000"),
 				//textAlign : cc.TEXT_ALIGNMENT_CENTER,
-				rotation : -90, 
+				rotation : -90,
 				scale : 0.5,
 				opacity : 0 
 			});
-			selfThis.scrollView.getInnerContainer().addChild(arrayOfRoutes[i],5);
+			this.scrollView.getInnerContainer().addChild(arrayOfRoutes[i]);
 			arrayOfRoutes[i].runAction(cc.sequence(
 					cc.delayTime(t+0.2), 
-					cc.spawn(cc.fadeIn(deltaT), 
-					cc.scaleTo(deltaT, 1, 1))
+					cc.spawn(cc.fadeIn(deltaT), cc.scaleTo(deltaT, 1, 1))					
 			));
 			if(i < 2){
-				selfThis.runAction(cc.sequence(
+				this.runAction(cc.sequence(
 						cc.delayTime(t), 
-						cc.callFunc(selfThis.scrollTo, selfThis, {x : arrayOfBoatPos[i].x-50, t:deltaT})				
+						cc.callFunc(this.scrollTo, this, {x : arrayOfBoatPos[i].x-50, t:deltaT})				
 				));
 			}
 			else{ 
-				selfThis.runAction(cc.sequence( 
+				this.runAction(cc.sequence(
 						cc.delayTime(t), 
-						cc.callFunc(selfThis.scrollTo, selfThis, {x : arrayOfBoatPos[i].x, t:deltaT})				
+						cc.callFunc(this.scrollTo, this, {x : arrayOfBoatPos[i].x, t:deltaT})				
 				));
 				//this.scrollView.scrollToPercentHorizontal((arrayOfBoatPos[i].x+500)/(1136*4)*100, deltaT, false);
 			}
-
+			t += deltaT; 			
 		}
-		
-		updateLabelAndBoat();
+		//最后的处理
+		deltaT *= 1.5;
+		this.boat.runAction(cc.sequence(
+				cc.delayTime(t), 
+				cc.moveTo(deltaT, cc.p(4112, 304)),	
+				cc.moveTo(deltaT, cc.p(4166, 257)),
+				cc.moveTo(deltaT, cc.p(4209, 174))
+		));
+		this.runAction(cc.sequence(
+				cc.delayTime(t), 
+				cc.callFunc(this.scrollTo, this, {x : 1136*4, t:deltaT*3}),
+				cc.delayTime(deltaT*3),
+				cc.callFunc(function(){
+					this.addChild(new DragIcon());
+				}, this)
+		));
 		
 	    //this.scrollView.scrollToRight( 2, false);
 		//this.scrollView.scrollToPercentHorizontal(50, 3, false);
@@ -378,15 +340,6 @@ var RoutesLayer = cc.Layer.extend({
 	}, 
 	scrollTo:function(nodeExecutingAction, data){
 		this.scrollView.scrollToPercentHorizontal((data.x+50)/(1136*4)*100, data.t, false);
-
-
-	},
-	updatePage:function(){
-		
-	},
-	removeLabel:function(nodeExecutingAction,data){
-		this.scrollView.getInnerContainer().removeChild(data.label);
-		cc.log("removeChild")
 	}
 	
 });
